@@ -1,8 +1,11 @@
 import os
+import uuid
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, func
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -16,7 +19,12 @@ Base = declarative_base()
 
 class UserModel(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+        index=True
+    )
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
@@ -36,7 +44,7 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 class User(BaseModel):
-    id: int
+    id: uuid.UUID
     username: str
     email: EmailStr
     created_at: str

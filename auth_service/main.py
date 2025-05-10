@@ -32,7 +32,7 @@ class TokenService:
     def create_access_token(user_id: int) -> str:
         now = int(time.time())
         payload = {
-            'sub': user_id,
+            'sub': str(user_id),
             'iat': now,
             'exp': now + ACCESS_TOKEN_EXPIRE_SECONDS
         }
