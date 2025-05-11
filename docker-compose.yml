@@ -18,14 +18,17 @@ services:
   
   auth_service:
     build: 
-      context: ./auth_service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - SERVICE_DIR=auth_service
     ports:
       - "8000:8000"
     depends_on:
       auth_database:
         condition: service_healthy
     environment:
+      - SERVICE_PORT=8000
       - DATABASE_URL=postgresql://postgres:1@auth_database:5432/authdb
 
   course_database:
@@ -46,14 +49,17 @@ services:
 
   course_service:
     build: 
-      context: ./course_service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - SERVICE_DIR=course_service
     ports:
       - "8001:8001"
     depends_on:
       course_database:
         condition: service_healthy
     environment:
+      - SERVICE_PORT=8001
       - DATABASE_URL=postgresql://postgres:1@course_database:5432/coursedb
 
   kafka:
@@ -102,8 +108,10 @@ services:
 
   purchase_service:
     build: 
-      context: ./purchase_service
-      dockerfile: ../commons/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - SERVICE_DIR=purchase_service
     ports:
       - "8003:8003"
     depends_on:
@@ -134,8 +142,10 @@ services:
 
   entitlement_service:
     build: 
-      context: ./entitlement_service
-      dockerfile: ../commons/Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - SERVICE_DIR=entitlement_service
     ports:
       - "8004:8004"
     depends_on:

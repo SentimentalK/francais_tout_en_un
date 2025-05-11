@@ -1,7 +1,3 @@
 PyJWT
 bcrypt
-fastapi
-SQLAlchemy
-psycopg2-binary
 pydantic[email]
-uvicorn[standard]
