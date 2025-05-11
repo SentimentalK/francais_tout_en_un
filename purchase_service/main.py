@@ -1,6 +1,5 @@
 import os
 import uuid
-import time
 import json
 from typing import Optional
 
@@ -15,7 +14,6 @@ KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP")
 KAFKA_TOPIC_PURCHASE = os.getenv("KAFKA_TOPIC_PURCHASE", "course.purchased")
 KAFKA_TOPIC_REFUND = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
 
-# Kafka Producer singleton
 producer: Optional[AIOKafkaProducer] = None
 async def get_producer() -> AIOKafkaProducer:
     global producer
@@ -33,7 +31,7 @@ def create_order(req: OrderRequest, db: Session = Depends(get_db)):
     order = OrderModel(
         order_id=order_id,
         user_id=req.user_id,
-        course_id=req.course_id,
+        course_ids=req.course_ids,
         amount=req.amount,
         status="PENDING"
     )
@@ -47,10 +45,10 @@ def create_order(req: OrderRequest, db: Session = Depends(get_db)):
 def pay_page(order_id: str):
     html = f"""
     <html><body>
-      <h3>模拟支付页面</h3>
+      <h3>payment simulation</h3>
       <p>Order ID: {order_id}</p>
       <form action="/orders/{order_id}/callback" method="post">
-        <button type="submit">确认支付</button>
+        <button type="submit">confirm</button>
       </form>
     </body></html>
     """
@@ -69,7 +67,7 @@ async def payment_callback(order_id: str, db: Session = Depends(get_db)):
     producer = await get_producer()
     event = {
         "user_id": order.user_id,
-        "course_id": order.course_id,
+        "course_ids": [order.course_id],
         "order_id": order.order_id,
         "purchased_at": order.created_at.isoformat()
     }
@@ -96,7 +94,7 @@ async def refund_order(order_id: str, db: Session = Depends(get_db)):
     producer = await get_producer()
     event = {
         "user_id": order.user_id,
-        "course_id": order.course_id,
+        "course_ids": [order.course_id],
         "order_id": order.order_id,
         "refunded_at": func.now().isoformat()
     }

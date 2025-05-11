@@ -1,7 +1,7 @@
 CREATE TABLE orders (
   order_id        UUID              PRIMARY KEY,
   user_id         UUID              NOT NULL,
-  course_id       INTEGER           NOT NULL,
+  course_ids      INTEGER[]         NOT NULL,
   amount          DECIMAL(10,2)     NOT NULL,
   currency        VARCHAR(3)        NOT NULL DEFAULT 'USD',
   status          VARCHAR(20)       NOT NULL,
@@ -13,4 +13,4 @@ CREATE TABLE orders (
   refund_reason   TEXT
 );
 CREATE INDEX idx_orders_user   ON orders(user_id);
-CREATE INDEX idx_orders_course ON orders(course_id);
+CREATE INDEX idx_status        ON orders(status);

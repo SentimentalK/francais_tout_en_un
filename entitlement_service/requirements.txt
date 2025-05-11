@@ -2,3 +2,4 @@ fastapi
 SQLAlchemy
 psycopg2-binary
 uvicorn[standard]
+aiokafka

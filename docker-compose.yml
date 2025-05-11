@@ -67,7 +67,7 @@ services:
       KAFKA_CFG_PROCESS_ROLES: broker,controller
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       # reduce resource usage
@@ -116,31 +116,35 @@ services:
       - DATABASE_URL=postgresql://postgres:1@purchase_database:5432/purchasedb
       - KAFKA_BOOTSTRAP=kafka:9092
 
-  # entitlement_database:
-  #   image: postgres:17-alpine
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=1
-  #     - POSTGRES_DB=coursedb
-  #   ports:
-  #     - "5435:5432"
-  #   volumes:
-  #   - ./entitlement_service/init.sql:/docker-entrypoint-initdb.d/init.sql
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 10
+  entitlement_database:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=entitledb
+    ports:
+      - "5436:5432"
+    volumes:
+    - ./entitlement_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  # entitlement_service:
-  #   build: 
-  #     context: ./entitlement_service
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8002:8002"
-  #   depends_on:
-  #     entitlement_database:
-  #       condition: service_healthy
-  #   environment:
-  #     - DATABASE_URL=postgresql://postgres:1@entitlement_database:5432/entitledb
+  entitlement_service:
+    build: 
+      context: ./entitlement_service
+      dockerfile: ../commons/Dockerfile
+    ports:
+      - "8004:8004"
+    depends_on:
+      entitlement_database:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - SERVICE_PORT=8004
+      - DATABASE_URL=postgresql://postgres:1@entitlement_database:5432/entitledb
+      - KAFKA_BOOTSTRAP=kafka:9092
     
