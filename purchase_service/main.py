@@ -2,6 +2,8 @@ import os
 import uuid
 import json
 from typing import Optional
+from utils.jwt_gate import TokenAuthority
+
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
@@ -24,13 +26,16 @@ async def get_producer() -> AIOKafkaProducer:
 
 app = FastAPI(title="Order Service")
 
-
-@app.post("/api/orders/create", response_model=OrderResponse)
-def create_order(req: OrderRequest, db: Session = Depends(get_db)):
+@app.post("/api/purchase/create", response_model=OrderResponse)
+def create_order(
+        req: OrderRequest, 
+        db: Session = Depends(get_db),
+        user_id :str = Depends(TokenAuthority.get_user_id)
+    ):
     order_id = str(uuid.uuid4())
     order = OrderModel(
         order_id=order_id,
-        user_id=req.user_id,
+        user_id=user_id,
         course_ids=req.course_ids,
         amount=req.amount,
         status="PENDING"
@@ -47,14 +52,14 @@ def pay_page(order_id: str):
     <html><body>
       <h3>payment simulation</h3>
       <p>Order ID: {order_id}</p>
-      <form action="/orders/{order_id}/callback" method="post">
+      <form action="/api/purchase/{order_id}/callback" method="post">
         <button type="submit">confirm</button>
       </form>
     </body></html>
     """
     return HTMLResponse(html)
 
-@app.post("/api/orders/{order_id}/callback")
+@app.post("/api/purchase/{order_id}/callback")
 async def payment_callback(order_id: str, db: Session = Depends(get_db)):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:
@@ -74,14 +79,14 @@ async def payment_callback(order_id: str, db: Session = Depends(get_db)):
     await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
     return {"message": "Payment successful"}
 
-@app.get("/api/orders/{order_id}", response_model=OrderStatus)
+@app.get("/api/purchase/{order_id}", response_model=OrderStatus)
 def get_order_status(order_id: str, db: Session = Depends(get_db)):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     return OrderStatus(order_id=order.order_id, status=order.status)
 
-@app.post("/api/orders/{order_id}/refund")
+@app.post("/api/purchase/{order_id}/refund")
 async def refund_order(order_id: str, db: Session = Depends(get_db)):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:

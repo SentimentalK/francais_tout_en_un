@@ -1,3 +1,4 @@
+PyJWT
 fastapi
 SQLAlchemy
 psycopg2-binary

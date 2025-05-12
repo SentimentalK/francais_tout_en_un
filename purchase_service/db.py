@@ -33,7 +33,6 @@ class OrderModel(Base):
 Base.metadata.create_all(bind=engine)
 
 class OrderRequest(BaseModel):
-    user_id: str
     course_ids: List[int]
     amount: float
 
