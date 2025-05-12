@@ -51,7 +51,7 @@ def create_order(
     payment_url = f"/pay/{order_id}"
     return OrderResponse(order_id=order_id, payment_url=payment_url)
 
-@app.get("/api/pay/{order_id}", response_class=HTMLResponse)
+@app.get("/api/purchase/pay/{order_id}", response_class=HTMLResponse)
 def pay_page(order_id: str):
     html = f"""
     <html><body>

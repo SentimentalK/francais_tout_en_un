@@ -9,7 +9,7 @@ from db import CourseModel, CourseResponse, SentenceModel, SentenceResponse, get
 AUDIO_DIR = os.getenv("AUDIO_DIR", "./src")
 app = FastAPI(title="Course Content Service")
 
-@app.get("/api/courses", response_model=List[CourseResponse])
+@app.get("/api/courses/", response_model=List[CourseResponse])
 def list_courses(db: Session = Depends(get_db)):
     try: 
         return db.query(CourseModel).order_by(CourseModel.lesson).all()

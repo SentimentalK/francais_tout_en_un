@@ -22,7 +22,7 @@ refund_topic = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
 
 app = FastAPI(title="Entitlement Service")
 
-@app.get("/api/entitlements", response_model=List[EntitlementOut])
+@app.get("/api/entitlements/", response_model=List[EntitlementOut])
 def list_entitlements(
         user_id :str = Depends(TokenAuthority.get_user_id),
         db: Session = Depends(get_db)
