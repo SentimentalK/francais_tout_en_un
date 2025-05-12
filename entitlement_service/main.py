@@ -6,6 +6,12 @@ from typing import List
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from aiokafka import AIOKafkaConsumer
+from utils.jwt_gate import TokenAuthority
+
+from utils.log_handler import setup_logging
+setup_logging()
+import logging
+logger = logging.getLogger(__name__)
 
 from db import Entitlement, EntitlementOut, CheckEntitlement, get_db, SessionLocal
 
@@ -16,13 +22,20 @@ refund_topic = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
 
 app = FastAPI(title="Entitlement Service")
 
-@app.get("/entitlements/{user_id}", response_model=List[EntitlementOut])
-def list_entitlements(user_id: str, db: Session = Depends(get_db)):
+@app.get("/api/entitlements", response_model=List[EntitlementOut])
+def list_entitlements(
+        user_id :str = Depends(TokenAuthority.get_user_id),
+        db: Session = Depends(get_db)
+    ):
     ents = db.query(Entitlement).filter(Entitlement.user_id == user_id).all()
     return [EntitlementOut(course_id=e.course_id, order_id=e.order_id) for e in ents]
 
-@app.get("/entitlements/{user_id}/course/{course_id}", response_model=CheckEntitlement)
-def check_entitlement(user_id: str, course_id: int, db: Session = Depends(get_db)):
+@app.get("/api/entitlements/{course_id}", response_model=CheckEntitlement)
+def check_entitlement(
+    course_id: int, 
+    db: Session = Depends(get_db),
+    user_id :str = Depends(TokenAuthority.get_user_id)
+):
     ent = db.query(Entitlement).filter(
         Entitlement.user_id == user_id,
         Entitlement.course_id == course_id

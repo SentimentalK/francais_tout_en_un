@@ -1,5 +1,6 @@
 import os
-from typing import List
+import uuid
+from typing import List, Optional
 
 
 from pydantic import BaseModel
@@ -41,8 +42,15 @@ class OrderResponse(BaseModel):
     payment_url: str
 
 class OrderStatus(BaseModel):
-    order_id: str
+    order_id: uuid.UUID
     status: str
+    amount: float
+    currency: str
+    payment_gateway: Optional[str] = None
+    gateway_txn_id: Optional[str] = None
+    created_at: str
+    updated_at: str
+    refunded_at: Optional[str] = None
 
 def get_db():
     db = SessionLocal()

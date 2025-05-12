@@ -1,14 +1,19 @@
 import os
 import uuid
 import json
+from datetime import datetime
 from typing import Optional
 from utils.jwt_gate import TokenAuthority
+from typing import List
 
+from utils.log_handler import setup_logging
+setup_logging()
+import logging
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from aiokafka import AIOKafkaProducer
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 from db import OrderModel, OrderRequest, OrderResponse, OrderStatus, get_db
 
@@ -60,23 +65,34 @@ def pay_page(order_id: str):
     return HTMLResponse(html)
 
 @app.post("/api/purchase/{order_id}/callback")
-async def payment_callback(order_id: str, db: Session = Depends(get_db)):
+async def payment_callback(
+    order_id: str, 
+    db: Session = Depends(get_db),
+    user_id :str = Depends(TokenAuthority.get_user_id)
+):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    if order.status != "PENDING":
+    if order.status not in ["PENDING","FAILED"]:
         raise HTTPException(status_code=400, detail="Order not in PENDING status")
-    order.status = "PAID"
-    db.commit()
 
     producer = await get_producer()
     event = {
-        "user_id": order.user_id,
-        "course_ids": [order.course_id],
-        "order_id": order.order_id,
+        "user_id": user_id,
+        "course_ids": order.course_ids,
+        "order_id": order_id,
         "purchased_at": order.created_at.isoformat()
     }
-    await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
+    try:
+        logger.info(f"event: {event}")
+        await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
+    except Exception as e:
+        logging.error(f"Kafka send failed: {e}")
+        order.status = "FAILED"
+        db.commit()
+        raise HTTPException(status_code=500, detail="Payment event send failed, please try again later.")
+    order.status = "PAID"
+    db.commit()
     return {"message": "Payment successful"}
 
 @app.get("/api/purchase/{order_id}", response_model=OrderStatus)
@@ -84,24 +100,61 @@ def get_order_status(order_id: str, db: Session = Depends(get_db)):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    return OrderStatus(order_id=order.order_id, status=order.status)
+    return OrderStatus(
+            order_id=order.order_id,
+            status=order.status,
+            amount=order.amount,
+            currency=order.currency,
+            payment_gateway=order.payment_gateway,
+            gateway_txn_id=order.gateway_txn_id,
+            created_at=order.created_at.isoformat(),
+            updated_at=order.updated_at.isoformat(),
+            refunded_at=order.refunded_at.isoformat() if order.refunded_at else None
+        )
+
+@app.get("/api/purchase", response_model=List[OrderStatus])
+def list_entitlements(
+        user_id :str = Depends(TokenAuthority.get_user_id),
+        db: Session = Depends(get_db)
+    ):
+    ords = db.query(OrderModel).filter(OrderModel.user_id == user_id).all()
+    return [OrderStatus(
+            order_id=e.order_id,
+            status=e.status,
+            amount=e.amount,
+            currency=e.currency,
+            payment_gateway=e.payment_gateway,
+            gateway_txn_id=e.gateway_txn_id,
+            created_at=e.created_at.isoformat(),
+            updated_at=e.updated_at.isoformat(),
+            refunded_at=e.refunded_at.isoformat() if e.refunded_at else None
+        ) for e in ords]
 
 @app.post("/api/purchase/{order_id}/refund")
-async def refund_order(order_id: str, db: Session = Depends(get_db)):
+async def refund_order(
+    order_id: str, 
+    db: Session = Depends(get_db),
+    user_id :str = Depends(TokenAuthority.get_user_id)
+):
     order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     if order.status != "PAID":
         raise HTTPException(status_code=400, detail="Order not in PAID status")
-    order.status = "REFUNDED"
-    db.commit()
 
     producer = await get_producer()
     event = {
-        "user_id": order.user_id,
-        "course_ids": [order.course_id],
-        "order_id": order.order_id,
-        "refunded_at": func.now().isoformat()
+        "user_id": user_id,
+        "course_ids": order.course_ids,
+        "order_id": order_id
     }
-    await producer.send_and_wait(KAFKA_TOPIC_REFUND, json.dumps(event).encode("utf-8"))
+    try:
+        await producer.send_and_wait(KAFKA_TOPIC_REFUND, json.dumps(event).encode("utf-8"))
+    except Exception as e:
+        logging.error(f"Kafka send failed: {e}")
+        raise HTTPException(status_code=500, detail="Payment event send failed, please try again later.")
+    order.status = "REFUNDED"
+    order.refunded_at = datetime.now()
+    db.commit()
     return {"message": "Refund processed"}
+

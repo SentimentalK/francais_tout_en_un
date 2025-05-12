@@ -1,4 +1,5 @@
 import os
+from uuid import UUID
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -18,7 +19,7 @@ class Entitlement(Base):
 
 class EntitlementOut(BaseModel):
     course_id: int
-    order_id: str
+    order_id: UUID
 
 class CheckEntitlement(BaseModel):
     has_access: bool
