@@ -1,0 +1,81 @@
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --text-color: #2c3e50;
+    --error-color: #ff4444;
+    --background-light: #f8f9fa;
+    --border-color: #bdc3c7;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    color: var(--text-color);
+    background: #f8f9fa;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 300;
+    font-size: 2.5rem;
+    margin: 2rem 0;
+    color: var(--text-color);
+}
+
+h2 {
+    font-weight: 500;
+    font-size: 2rem;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.free-tag {
+    color: #2ecc71;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.purchase-tag {
+    color: #7A288A;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    background: rgba(122, 40, 138, 0.1);
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #7f8c8d;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #2c3e50;
+}
+
+.course-container{
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message {
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}

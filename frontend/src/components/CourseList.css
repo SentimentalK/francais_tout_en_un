@@ -1,0 +1,9 @@
+.course-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.course-list-container {
+  margin: 2rem 0;
+}

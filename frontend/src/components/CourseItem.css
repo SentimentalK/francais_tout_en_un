@@ -1,0 +1,38 @@
+.course-item {
+    background: white;
+    border-radius: 8px;
+    margin: 1rem 0;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.course-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.course-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.tag {
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+}
+
+.free-tag {
+    color: var(--free-color);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.purchased-tag {
+    color: #7A288A;
+    background: rgba(122, 40, 138, 0.1);
+}
