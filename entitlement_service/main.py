@@ -6,9 +6,10 @@ from typing import List
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from aiokafka import AIOKafkaConsumer
-from utils.jwt_gate import TokenAuthority
+from utils.tokens import TokenAuthority
+from utils.courses import EntitlementsCache
 
-from utils.log_handler import setup_logging
+from utils.logs import setup_logging
 setup_logging()
 import logging
 logger = logging.getLogger(__name__)
@@ -20,6 +21,8 @@ kafka_bootstrap = os.getenv("KAFKA_BOOTSTRAP")
 purchase_topic = os.getenv("KAFKA_TOPIC_PURCHASE", "course.purchased")
 refund_topic = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
 
+redis_cache = EntitlementsCache()
+semaphore = asyncio.Semaphore(10)
 app = FastAPI(title="Entitlement Service")
 
 @app.get("/api/entitlements/", response_model=List[EntitlementOut])
@@ -28,6 +31,9 @@ def list_entitlements(
         db: Session = Depends(get_db)
     ):
     ents = db.query(Entitlement).filter(Entitlement.user_id == user_id).all()
+    course_ids = [e.course_id for e in ents]
+    if course_ids:
+        redis_cache.add_courses(user_id, course_ids)
     return [EntitlementOut(course_id=e.course_id, order_id=e.order_id) for e in ents]
 
 @app.get("/api/entitlements/{course_id}", response_model=CheckEntitlement)
@@ -42,7 +48,6 @@ def check_entitlement(
     ).first()
     return CheckEntitlement(has_access=bool(ent))
 
-semaphore = asyncio.Semaphore(10)
 
 async def handle_event(msg):
     async with semaphore:
@@ -62,6 +67,7 @@ async def handle_event(msg):
                     if not exists:
                         ent = Entitlement(user_id=user_id, course_id=cid, order_id=order_id)
                         db.add(ent)
+                        redis_cache.add_courses(user_id, [cid])
                 db.commit()
             elif topic == refund_topic:
                 for cid in course_ids:
@@ -71,6 +77,7 @@ async def handle_event(msg):
                     ).first()
                     if ent:
                         db.delete(ent)
+                        redis_cache.remove_course(user_id, cid)
                 db.commit()
         finally:
             db.close()

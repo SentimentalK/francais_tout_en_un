@@ -7,8 +7,8 @@ export default function CourseList({ courses }) {
       <ul className='course-list'>
         {courses.map(course => (
           <CourseItem
-            key={course.lesson}
-            lesson={course.lesson}
+            key={course.course}
+            course={course.course}
             isFree={course.free}
           />
         ))}

@@ -10,7 +10,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           {/* <Route path="/login" element={<LoginPage />} /> */}
-          {/* <Route path="/content/:lessonId" element={<CoursePage />} /> */}
+          {/* <Route path="/content/:courseId" element={<CoursePage />} /> */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

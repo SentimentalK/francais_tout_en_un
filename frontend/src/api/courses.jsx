@@ -6,7 +6,7 @@ export async function fetchCourses() {
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('fetchCourses failed in dev, using mock data');
-      return [{ "lesson": 1, "free": true }, { "lesson": 2, "free": false },];
+      return [{ "course": 1, "free": true }, { "course": 2, "free": false },];
     } else {
       throw error;
     }

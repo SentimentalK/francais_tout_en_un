@@ -30,8 +30,8 @@ export default function HomePage() {
     loadData();
   }, []);
 
-  const filteredCourses = courses.filter(course => {
-    const searchContent = `assimil french chapter ${course.lesson} ${course.free ? 'free' : ''}`.toLowerCase();
+  const filteredCourses = courses.filter(meta => {
+    const searchContent = `assimil french chapter ${meta.course} ${meta.free ? 'free' : ''}`.toLowerCase();
     return searchContent.includes(searchTerm.toLowerCase());
   });
 

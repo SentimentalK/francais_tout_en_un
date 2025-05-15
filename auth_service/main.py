@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from utils.jwt_gate import TokenAuthority
+from utils.tokens import TokenAuthority
 
 from db import (
     UserModel,
