@@ -42,6 +42,39 @@ def check_entitlement(
     ).first()
     return CheckEntitlement(has_access=bool(ent))
 
+semaphore = asyncio.Semaphore(10)
+
+async def handle_event(msg):
+    async with semaphore:
+        topic = msg.topic
+        payload = json.loads(msg.value.decode("utf-8"))
+        user_id = payload.get("user_id")
+        order_id = payload.get("order_id")
+        course_ids = payload.get("course_ids") or [payload.get("course_id")]
+        db = SessionLocal()
+        try:
+            if topic == purchase_topic:
+                for cid in course_ids:
+                    exists = db.query(Entitlement).filter(
+                        Entitlement.user_id == user_id,
+                        Entitlement.course_id == cid
+                    ).first()
+                    if not exists:
+                        ent = Entitlement(user_id=user_id, course_id=cid, order_id=order_id)
+                        db.add(ent)
+                db.commit()
+            elif topic == refund_topic:
+                for cid in course_ids:
+                    ent = db.query(Entitlement).filter(
+                        Entitlement.user_id == user_id,
+                        Entitlement.course_id == cid
+                    ).first()
+                    if ent:
+                        db.delete(ent)
+                db.commit()
+        finally:
+            db.close()
+
 async def consume_events():
     consumer = AIOKafkaConsumer(
         purchase_topic, refund_topic,
@@ -51,38 +84,16 @@ async def consume_events():
         auto_offset_reset="earliest"
     )
     await consumer.start()
+    tasks = set()
     try:
         async for msg in consumer:
-            topic = msg.topic
-            payload = json.loads(msg.value.decode("utf-8"))
-            user_id = payload.get("user_id")
-            order_id = payload.get("order_id")
-            course_ids = payload.get("course_ids") or [payload.get("course_id")]
-            db = SessionLocal()
-            try:
-                if topic == purchase_topic:
-                    for cid in course_ids:
-                        exists = db.query(Entitlement).filter(
-                            Entitlement.user_id == user_id,
-                            Entitlement.course_id == cid
-                        ).first()
-                        if not exists:
-                            ent = Entitlement(user_id=user_id, course_id=cid, order_id=order_id)
-                            db.add(ent)
-                    db.commit()
-                elif topic == refund_topic:
-                    for cid in course_ids:
-                        ent = db.query(Entitlement).filter(
-                            Entitlement.user_id == user_id,
-                            Entitlement.course_id == cid
-                        ).first()
-                        if ent:
-                            db.delete(ent)
-                    db.commit()
-            finally:
-                db.close()
+            task = asyncio.create_task(handle_event(msg))
+            tasks.add(task)
+            tasks = {t for t in tasks if not t.done()}
     finally:
         await consumer.stop()
+        if tasks:
+            await asyncio.gather(*tasks)
 
 
 @app.on_event("startup")
