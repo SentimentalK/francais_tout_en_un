@@ -1,59 +1,68 @@
-import bcrypt
-from fastapi import Depends, HTTPException
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+import uuid
 from sqlalchemy.orm import Session
-from utils.tokens import TokenAuthority
+from fastapi import FastAPI, Depends, HTTPException, status
 
-from db import (
-    UserModel,
-    RegisterRequest,
-    LoginRequest,
-    TokenResponse,
-    User,
-    get_db,
-    create_user,
-    get_user_by_username,
+from orm import get_db
+from repository import UserRepo
+from service import AuthService
+from utils.tokens import TokenAuthority
+from schemas import RegisterRequest, LoginRequest, TokenResponse, UserResponse
+
+
+app = FastAPI(
+    title="User Auth Service",
+    description="User authentication with FastAPI and Repository Pattern.",
+    version="1.0.0"
 )
 
+def user_repo(db: Session = Depends(get_db)) -> UserRepo:
+    return UserRepo(db=db)
 
-class AuthService:
-    def __init__(self, db: Session):
-        self.db = db
-
-    def register(self, username: str, email: str, password: str) -> str:
-        if get_user_by_username(self.db, username):
-            raise HTTPException(status_code=400, detail="Username already registered")
-        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        user = create_user(self.db, username, email, hashed)
-        return TokenAuthority.create_access_token(user.id)
-
-    def login(self, username: str, password: str) -> str:
-        user = get_user_by_username(self.db, username)
-        if not user or not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
-            raise HTTPException(status_code=401, detail="Incorrect username or password")
-        return TokenAuthority.create_access_token(user.id)
-
-    def get_current_user(self, token: str) -> User:
-        data = TokenAuthority.verify_token(token)
-        user = self.db.query(UserModel).get(data.get('sub'))
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        return User(id=user.id, username=user.username, email=user.email, created_at=str(user.created_at))
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
-app = FastAPI()
+def auth_service(user_repo: UserRepo = Depends(user_repo)) -> AuthService:
+    return AuthService(user_repo=user_repo)
 
 @app.post('/api/user/register', response_model=TokenResponse)
-def register(req: RegisterRequest, db: Session = Depends(get_db)):
-    token = AuthService(db).register(req.username, req.email, req.password)
-    return TokenResponse(access_token=token)
+def register(
+        req: RegisterRequest, 
+        service: AuthService = Depends(auth_service)
+    ):
+    try:
+        access_token = service.register(
+            username=req.username,
+            email=req.email,
+            password=req.password
+        )
+        return TokenResponse(access_token=access_token, token_type="bearer")
+    except HTTPException:
+        raise
 
 @app.post('/api/user/login', response_model=TokenResponse)
-def login(req: LoginRequest, db: Session = Depends(get_db)):
-    token = AuthService(db).login(req.username, req.password)
-    return TokenResponse(access_token=token)
+def login(
+        req: LoginRequest, 
+        service: AuthService = Depends(auth_service)
+    ):
+    try:
+        access_token = service.login(username=req.username, password=req.password)
+        return TokenResponse(access_token=access_token, token_type="bearer")
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Login failed unexpectedly.")
 
-@app.get('/api/user/info', response_model=User)
-def read_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    return AuthService(db).get_current_user(token)
+@app.get('/api/user/info', response_model=UserResponse)
+def user_info(
+        user_id :str = Depends(TokenAuthority.get_user_id),
+        service: AuthService = Depends(auth_service)
+    ):
+    try:
+        user = service.get_user_info(user_id=uuid.UUID(user_id))
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Retrive user_info failed unexpectedly.")
+    return UserResponse(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        created_at=user.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
