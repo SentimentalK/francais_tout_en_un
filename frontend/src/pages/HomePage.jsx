@@ -1,43 +1,74 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
+import useEntitlements from '../hooks/useEntitlements';
 import useAuth from '../hooks/useAuth';
+import useCourses from '../hooks/useCourses';
 import NavBar from '../components/NavBar';
 import SearchInput from '../components/SearchInput';
 import CourseList from '../components/CourseList';
-import { fetchCourses } from '../api/courses';
 import '../assets/global.css';
 
 export default function HomePage() {
-  const { isLoggedIn, handleLogout } = useAuth();
-  const [courses, setCourses] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { user, isLoggedIn, isLoadingAuth, token, handleLogout } = useAuth();
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await fetchCourses();
-        if (!data || data.length === 0) {
-          throw new Error('No courses available');
-        }
-        setCourses(data);
-      } catch (err) {
-        setError(err.message || 'Failed to load courses'); // 确保有默认错误信息
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  const {
+    data: coursesData,
+    isLoading: isLoadingCourses,
+    isError: isErrorCourses,
+    error: errorCoursesMsg,
+  } = useCourses();
 
-  const filteredCourses = courses.filter(meta => {
-    const searchContent = `assimil french chapter ${meta.course} ${meta.free ? 'free' : ''}`.toLowerCase();
-    return searchContent.includes(searchTerm.toLowerCase());
-  });
+  const {
+    data: entitlementsData,
+    isLoading: isLoadingEntitlements,
+    isError: isErrorEntitlements,
+    error: errorEntitlementsMsg,
+  } = useEntitlements(token);
+
+  const enrichedCourses = useMemo(() => {
+    const baseCourses = Array.isArray(coursesData) ? coursesData : [];
+    
+    let purchasedCourseIds = new Set();
+    if (isLoggedIn && Array.isArray(entitlementsData)) {
+      entitlementsData.forEach(entitlement => {
+        purchasedCourseIds.add(entitlement.course_id);
+      });
+    }
+
+    return baseCourses.map(course => ({
+      ...course, 
+      purchased: purchasedCourseIds.has(course.course),
+    }));
+  }, [coursesData, entitlementsData, isLoggedIn]);
+
+  const filteredCourses = useMemo(() => {
+    if (!enrichedCourses) return [];
+    return enrichedCourses.filter(meta => {
+      const searchContent = `assimil french chapter ${meta.course} ${meta.free ? 'free' : ''} ${meta.purchased ? 'purchased' : ''}`.toLowerCase();
+      return searchContent.includes(searchTerm.toLowerCase());
+    });
+  }, [enrichedCourses, searchTerm]);
+
+  if (isLoadingAuth) {
+    return <div className="container message">Authenticating...</div>;
+  }
+  if (!isLoadingAuth && isLoadingCourses && !coursesData) {
+    return <div className="container message">Loading courses...</div>;
+  }
+  if (!isLoadingAuth && isLoggedIn && isLoadingEntitlements && !entitlementsData) {
+    return <div className="container message">Loading your entitlements...</div>;
+  }
+
+  let displayErrorMessage = null;
+  if (isErrorCourses) {
+    displayErrorMessage = (errorCoursesMsg instanceof Error ? errorCoursesMsg.message : String(errorCoursesMsg)) || 'Failed to load courses.';
+  } else if (isLoggedIn && isErrorEntitlements) {
+    displayErrorMessage = (errorEntitlementsMsg instanceof Error ? errorEntitlementsMsg.message : String(errorEntitlementsMsg)) || 'Failed to load your entitlements.';
+  }
 
   return (
     <div className="container">
-      <NavBar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <NavBar user={user} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <h1>Assimil French Course</h1>
 
       <div className="course-container">
@@ -47,10 +78,10 @@ export default function HomePage() {
           placeholder="Search Courses (e.g. 'free', 'chapter 1')"
         />
 
-        {loading ? (
-          <div className="message">Loading courses...</div>
-        ) : error ? (
-          <p className="message">⚠️ Course loading failed</p>
+        {displayErrorMessage ? (
+          <p className="message">⚠️ {displayErrorMessage}</p>
+        ) : (isLoadingCourses && !coursesData) || (isLoggedIn && isLoadingEntitlements && !entitlementsData) ? (
+          <div className="message">Loading content...</div>
         ) : (
           <CourseList courses={filteredCourses} />
         )}

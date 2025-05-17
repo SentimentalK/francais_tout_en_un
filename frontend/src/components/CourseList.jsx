@@ -1,7 +1,11 @@
-import CourseItem from './CourseItem'
+import CourseItem from './CourseItem';
 import './CourseList.css';
 
 export default function CourseList({ courses }) {
+  if (!courses || courses.length === 0) {
+    return null;
+  }
+
   return (
     <div className='course-list-container'>
       <ul className='course-list'>
@@ -10,8 +14,10 @@ export default function CourseList({ courses }) {
             key={course.course}
             course={course.course}
             isFree={course.free}
+            purchased={course.purchased}
           />
         ))}
-      </ul></div>
-  )
+      </ul>
+    </div>
+  );
 }

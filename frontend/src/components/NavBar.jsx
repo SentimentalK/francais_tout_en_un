@@ -1,6 +1,6 @@
 import './NavBar.css';
 
-export default function NavBar({ isLoggedIn, onLogout }) {
+export default function NavBar({ isLoggedIn, onLogout, handleLogout }) {
     return (
         <div className="nav-bar">
             <button

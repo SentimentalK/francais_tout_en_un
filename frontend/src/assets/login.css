@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+.auth-container {
+    max-width: 500px;
+    margin: 4rem auto;
+    padding: 2rem 2.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.form-group {
+    margin: 1.5rem 0;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.terms-group {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.tab-controls {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.tab-controls button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    background: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-controls button.active {
+    color: #3498db;
+    border-bottom: 2px solid #3498db;
+}
+
+button[type="submit"] {
+    background: #3498db;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background: #2980b9;
+}
+
+.validation-message,
+.error-message {
+    color: #ff4444;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.error-message {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+    text-align: left;
+}
+
+.error-message.show {
+    display: block;
+}
+
+input.invalid {
+    border-color: #ff4444 !important;
+}

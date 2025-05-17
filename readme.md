@@ -9,6 +9,7 @@
 - **Containerization**: Docker
 - **Frontend**: React
 - **Authentication**: JWT
+- **API Gateway**: Nginx
 
 ## Requirements
 To run the application locally, ensure you have the following tools installed:
@@ -45,18 +46,21 @@ config:
   theme: redux
   layout: dagre
 ---
-flowchart LR
-    FE["Front End"] -->|purchase or refund| PS["Purchase Service"]
-    FE -->|login| AS["Authentication Service"]
-    FE -->|fetch entitlement data| ES["Entitlement Service"]
-    ES -->|return entitlement data| FE
-    FE -->|request content| CS["Course Service"]
-    AS -->|issue JWT token| FE
-    ES -->|provide course entitlement| FE
-    ES -->|cache user course access| Redis["Redis"]
-    CS -->|verify access| Redis
-    CS -->|return content or 403| FE
-    PS -->|emit purchase/refund event| MQ["Message Queue"]
-    MQ -->|deliver events| ES
-    ES -->|update cached course access| Redis
+flowchart TD
+    FE["Front End"] -- API Requests / User Actions --> NG["Nginx"]
+    NG -- POST /api/user/login --> AS["Authentication Service"]
+    AS -- JWT Token / Login Response --> NG
+    NG -- GET /api/entitlements --> ES["Entitlement Service"]
+    ES -- Entitlement Data --> NG
+    NG -- GET /api/courses/{id} --> CS["Course Service"]
+    CS -- Course Content / 403 --> NG
+    NG -- POST /api/purchase --> PS["Purchase Service"]
+    PS -- Purchase Confirmation --> NG
+    NG -- HTTP/S Responses --> FE
+    %% Internal Communications
+    ES -- cache user course access --> Redis["Redis"]
+    CS -- verify access --> Redis
+    PS -- emit purchase/refund event --> MQ["Message Queue"]
+    MQ -- deliver events --> ES
+    ES -- update cached course access --> Redis
 ```
