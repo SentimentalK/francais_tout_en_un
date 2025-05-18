@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const { login, register, isLoadingAuth: isAuthProcessing } = useAuth();
+  const { login, register } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {

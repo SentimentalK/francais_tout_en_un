@@ -9,7 +9,7 @@ import '../assets/global.css';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { user, isLoggedIn, isLoadingAuth, token, handleLogout } = useAuth();
+  const { user, isLoggedIn, token, handleLogout } = useAuth();
 
   const {
     data: coursesData,
@@ -49,14 +49,8 @@ export default function HomePage() {
     });
   }, [enrichedCourses, searchTerm]);
 
-  if (isLoadingAuth) {
-    return <div className="container message">Authenticating...</div>;
-  }
-  if (!isLoadingAuth && isLoadingCourses && !coursesData) {
+  if (!coursesData) {
     return <div className="container message">Loading courses...</div>;
-  }
-  if (!isLoadingAuth && isLoggedIn && isLoadingEntitlements && !entitlementsData) {
-    return <div className="container message">Loading your entitlements...</div>;
   }
 
   let displayErrorMessage = null;

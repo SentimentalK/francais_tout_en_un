@@ -7,28 +7,23 @@ const TOKEN_KEY = 'access_token';
 export default function useAuth() {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const navigate = useNavigate();
 
   const processTokenAndFetchUser = useCallback(async (receivedToken) => {
     localStorage.setItem(TOKEN_KEY, receivedToken);
     setToken(receivedToken);
-    setIsLoadingAuth(true);
     try {
       const userInfo = await fetchUserInfo(receivedToken);
       setUser(userInfo);
       setIsLoggedIn(true);
       navigate('/');
     } catch (error) {
-      console.error("处理Token并获取用户信息失败:", error);
       localStorage.removeItem(TOKEN_KEY);
       setToken(null);
       setUser(null);
       setIsLoggedIn(false);
       throw error;
-    } finally {
-      setIsLoadingAuth(false);
     }
   }, [navigate]);
   
@@ -50,7 +45,6 @@ export default function useAuth() {
       setUser(null);
       setIsLoggedIn(false);
     }
-    setIsLoadingAuth(false);
   }, [navigate]);
 
   useEffect(() => {
@@ -60,7 +54,6 @@ export default function useAuth() {
   const handleLoginSuccess = useCallback(async (newToken) => {
     localStorage.setItem(TOKEN_KEY, newToken);
     setToken(newToken);
-    setIsLoadingAuth(true);
     await attemptLoginWithToken();
     navigate('/');
   }, [attemptLoginWithToken]);
@@ -70,6 +63,7 @@ export default function useAuth() {
     setToken(null);
     setUser(null);
     setIsLoggedIn(false);
+    navigate('/');
   }, [navigate]);
 
   const login = useCallback(async (credentials) => {
@@ -82,5 +76,5 @@ export default function useAuth() {
     await processTokenAndFetchUser(newToken);
   }, [processTokenAndFetchUser]);
 
-  return { user, isLoggedIn, isLoadingAuth, token,register, login, handleLoginSuccess, handleLogout, attemptLoginWithToken };
+  return { user, isLoggedIn, token,register, login, handleLoginSuccess, handleLogout, attemptLoginWithToken };
 }

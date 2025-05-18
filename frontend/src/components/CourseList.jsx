@@ -12,7 +12,7 @@ export default function CourseList({ courses }) {
         {courses.map(course => (
           <CourseItem
             key={course.course}
-            course={course.course}
+            course_id={course.course}
             isFree={course.free}
             purchased={course.purchased}
           />
