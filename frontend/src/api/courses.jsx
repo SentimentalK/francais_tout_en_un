@@ -7,7 +7,7 @@ export async function fetchCourses() {
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('fetchCourses failed in dev, using mock data');
-      return [{ "course": 1, "price": 0.00 }, { "course": 2, "price": 9.99 },];
+      return [{ "course_id": 1, "price": 0.00 }, { "course_id": 2, "price": 9.99 },];
     } else {
       console.error("Error fetching courses: ",error.config?.url, error.message);
       throw error;

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import CoursePage from './pages/CoursePage'
+import CheckoutPage from './pages/CheckoutPage'
 import { configureAxiosInterceptors } from './api/service';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

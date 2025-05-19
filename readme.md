@@ -34,6 +34,10 @@ http://localhost
 ```
 docker-compose up -d --no-deps --build --force-recreate <service_name>
 ```
+**Restart & build single database(for rerun init.sql)**:
+```
+docker-compose rm -sfv <database_name> && docker-compose up -d --no-deps --build <database_name>
+```
 **Start the React frontend in development mode:**
 ```
 yarn dev
@@ -54,9 +58,14 @@ flowchart TD
     ES -- Entitlement Data --> NG
     NG -- GET /api/courses/{id} --> CS["Course Service"]
     CS -- Course Content / 403 --> NG
+    
+    %% Purchase Flow involving Purchase Service and Course Service for prices
     NG -- POST /api/purchase --> PS["Purchase Service"]
+    PS -- "GET Course Price" --> CS
+    CS -- "Return Authoritative Prices" --> PS
     PS -- Purchase Confirmation --> NG
     NG -- HTTP/S Responses --> FE
+    
     %% Internal Communications
     ES -- cache user course access --> Redis["Redis"]
     CS -- verify access --> Redis

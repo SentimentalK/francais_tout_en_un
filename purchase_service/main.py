@@ -1,11 +1,13 @@
 import os
 import uuid
 import json
-from datetime import datetime
-from typing import Optional
-from utils.tokens import TokenAuthority
+import requests
 from typing import List
+from typing import Optional
+from datetime import datetime
+from requests.exceptions import RequestException
 
+from utils.tokens import TokenAuthority
 from utils.logs import setup_logging
 setup_logging()
 import logging
@@ -20,6 +22,7 @@ from db import OrderModel, OrderRequest, OrderResponse, OrderStatus, get_db
 KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP")
 KAFKA_TOPIC_PURCHASE = os.getenv("KAFKA_TOPIC_PURCHASE", "course.purchased")
 KAFKA_TOPIC_REFUND = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
+COURSE_SERVICE_URL = os.getenv("COURSE_SERVICE_URL", "http://course_service:8001/api/courses/")
 
 producer: Optional[AIOKafkaProducer] = None
 async def get_producer() -> AIOKafkaProducer:
@@ -37,19 +40,32 @@ def create_order(
         db: Session = Depends(get_db),
         user_id :str = Depends(TokenAuthority.get_user_id)
     ):
-    order_id = str(uuid.uuid4())
+
+    try:
+        response = requests.get(COURSE_SERVICE_URL, timeout=5)
+        response.raise_for_status() 
+        courses_data = response.json()
+        total = sum(float(c["price"]) for c in courses_data if c["course_id"] in req.course_ids)
+    except RequestException as e:
+        logger.error(f"Error fetching course data from {COURSE_SERVICE_URL}: {e}")
+        raise HTTPException(status_code=503, detail=f"Course service unavailable: {e}")
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON from course service: {e}")
+        raise HTTPException(status_code=500, detail="Invalid response from course service.")
+
+    order_id = uuid.uuid4()
     order = OrderModel(
         order_id=order_id,
-        user_id=user_id,
+        user_id=uuid.UUID(user_id),
         course_ids=req.course_ids,
-        amount=req.amount,
+        amount=total,
         status="PENDING"
     )
     db.add(order)
     db.commit()
     db.refresh(order)
-    payment_url = f"/pay/{order_id}"
-    return OrderResponse(order_id=order_id, payment_url=payment_url)
+    payment_url = f"/purchase/{order_id}"
+    return OrderResponse(order_id=order_id, payment_url=payment_url, amount=total)
 
 @app.get("/api/purchase/pay/{order_id}", response_class=HTMLResponse)
 def pay_page(order_id: str):

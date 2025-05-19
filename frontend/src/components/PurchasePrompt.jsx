@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function PurchasePrompt({ courseId, isLoggedIn }) {
-    const purchasePath = isLoggedIn ? `/purchase?course=${courseId}` : `/login?redirect=/courses/${courseId}/content`;
+    const purchasePath = isLoggedIn ? `/checkout?course=${courseId}` : `/login?redirect=/courses/${courseId}/content`;
     const buttonText = isLoggedIn ? 'Purchase Now!' : 'Login to Purchase';
 
     return (

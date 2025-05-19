@@ -333,7 +333,7 @@ CREATE VIEW courses AS
 SELECT DISTINCT course_id,
     CASE
         WHEN course_id <= 3 THEN 0.00
-        WHEN course_id <= 10 THEN 9.99
-        ELSE 10 + (course_id - 10) * 2.00 - 0.01
+        WHEN course_id <= 10 THEN 0.99
+        ELSE 1 + (course_id - 10) * 0.25 - 0.01
     END AS price
 FROM contents;
