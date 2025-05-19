@@ -1,97 +1,63 @@
+import apiClient from './service'
+
 export async function fetchCourses() {
   try {
-    const res = await fetch('/api/courses/');
-    if (!res.ok) {
-      const errorData = await res.text();
-      throw new Error(`/api/courses/ failed with status ${res.status}: ${errorData}`);
-    }
-    return res.json();
+    const res = await apiClient.get('/courses/');
+    return res.data;
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn('fetchCourses failed in dev, using mock data');
       return [{ "course": 1, "free": true }, { "course": 2, "free": false },];
     } else {
+      console.error("Error fetching courses: ",error.config?.url, error.message);
       throw error;
     }
   }
 }
 
-export async function fetchEntitlements(token) {
-  if (!token) {
-    return Promise.resolve([]);
+export async function fetchEntitlements() {
+  if (!localStorage.getItem('access_token')) {
+    return [];
   }
-  const res = await fetch('/api/entitlements/', {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  if (!res.ok) {
-    const errorData = await res.text();
-    throw new Error(`Failed to load entitlements with status ${res.status}: ${errorData}`);
-  }
-
-  return res.json();
-}
-
-export async function fetchCourseSentences(courseId, token) {
-  const url = `/api/courses/${courseId}/sentences`;
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, { headers });
-
-  if (!response.ok) {
-    if (response.status === 403) {
-      const errorData = await response.json(); 
-      const error = new Error(errorData.detail);
-      error.status = 403;
-      error.data = errorData;
-      throw error;
-    }
-    const error = new Error(`Failed to fetch course sentences. Status: ${response.status}`);
-    error.status = response.status;
-    try {
-      error.data = await response.json();
-    } catch (e) {
-      error.data = { detail: await response.text() };
-    }
+  try {
+    const res = await apiClient.get('/entitlements/');
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching entitlements: ",error.config?.url, error.message);
     throw error;
   }
-  return response.json();
 }
 
-export async function fetchCourseAudioBlob(courseId, token) {
-  const url = `/api/courses/${courseId}/audio`;
-  const headers = {};
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+export async function fetchCourseSentences(courseId) {
+  const url = `/courses/${courseId}/sentences`;
+  try {
+    const res = await apiClient.get(url);
+    return res.data;
   }
+  catch (error) {
+    console.error("Error fetching course sentences: ",error.config?.url, error.message);
+    throw error;
+  }
+}
 
-  const response = await fetch(url, { headers });
-
-  if (!response.ok) {
-    if (response.status === 403) {
-      let errorData;
+export async function fetchCourseAudioBlob(courseId) {
+  const url = `/courses/${courseId}/audio`;
+  try {
+    const response = await apiClient.get(url, { responseType: 'blob' });
+    if (response.data && response.data.type && !response.data.type.startsWith('audio/')) {
+      console.warn(`Expected an audio blob, but received type: ${response.data.type}. This might be an error blob.`);
+      let errorDetail = 'Received non-audio data when expecting audio.';
       try {
-        errorData = await response.json();
-      } catch (e) {
-        errorData = { detail: 'Access to audio denied and non-JSON response.' };
-      }
-      const error = new Error(errorData.detail || 'Access to course audio forbidden.');
-      error.status = 403;
-      error.data = errorData;
-      throw error;
+        const errorText = await response.data.text();
+        console.error('Content of unexpected blob:', errorText);
+        errorDetail = errorText;
+      } catch (e){}
+      throw new Error(errorDetail);
     }
-    const error = new Error(`Failed to fetch course audio. Status: ${response.status}`);
-    error.status = response.status;
-    try {
-      error.data = await response.json();
-    } catch (e) {
-      error.data = { detail: await response.text() };
-    }
+    return response.data;
+
+  } catch (error) {
+    console.error('Error fetching course audio with apiClient:', error.config?.url, error.message);
     throw error;
   }
-  return response.blob();
 }

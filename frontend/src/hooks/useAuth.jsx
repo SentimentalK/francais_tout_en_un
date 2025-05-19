@@ -10,14 +10,20 @@ export default function useAuth() {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const navigate = useNavigate();
 
-  const processTokenAndFetchUser = useCallback(async (receivedToken) => {
-    localStorage.setItem(TOKEN_KEY, receivedToken);
-    setToken(receivedToken);
+  const authenticateAndFetchUser = useCallback(async (receivedToken) => {
+    const tokenToUse = receivedToken || localStorage.getItem(TOKEN_KEY);
+    if (!tokenToUse) {
+      setUser(null);
+      setIsLoggedIn(false);
+      setToken(null);
+      return;
+    }
+    localStorage.setItem(TOKEN_KEY, tokenToUse);
+    setToken(tokenToUse);
     try {
-      const userInfo = await fetchUserInfo(receivedToken);
+      const userInfo = await fetchUserInfo();
       setUser(userInfo);
       setIsLoggedIn(true);
-      navigate('/');
     } catch (error) {
       localStorage.removeItem(TOKEN_KEY);
       setToken(null);
@@ -27,36 +33,9 @@ export default function useAuth() {
     }
   }, [navigate]);
   
-  const attemptLoginWithToken = useCallback(async () => {
-    const currentToken = localStorage.getItem(TOKEN_KEY);
-    setToken(currentToken);
-    if (currentToken) {
-      try {
-        const userInfo = await fetchUserInfo(currentToken);
-        setUser(userInfo);
-        setIsLoggedIn(true);
-      } catch (error) {
-        localStorage.removeItem(TOKEN_KEY);
-        setToken(null);
-        setUser(null);
-        setIsLoggedIn(false);
-      }
-    } else {
-      setUser(null);
-      setIsLoggedIn(false);
-    }
-  }, [navigate]);
-
   useEffect(() => {
-    attemptLoginWithToken();
-  }, [attemptLoginWithToken]);
-
-  const handleLoginSuccess = useCallback(async (newToken) => {
-    localStorage.setItem(TOKEN_KEY, newToken);
-    setToken(newToken);
-    await attemptLoginWithToken();
-    navigate('/');
-  }, [attemptLoginWithToken]);
+    authenticateAndFetchUser();
+  }, [authenticateAndFetchUser]);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
@@ -68,13 +47,13 @@ export default function useAuth() {
 
   const login = useCallback(async (credentials) => {
     const newToken = await apiLoginUser(credentials);
-    await processTokenAndFetchUser(newToken);
-  }, [processTokenAndFetchUser]);
+    await authenticateAndFetchUser(newToken);
+  }, [authenticateAndFetchUser]);
 
   const register = useCallback(async (userData) => {
     const newToken = await apiRegisterUser(userData);
-    await processTokenAndFetchUser(newToken);
-  }, [processTokenAndFetchUser]);
+    await authenticateAndFetchUser(newToken);
+  }, [authenticateAndFetchUser]);
 
-  return { user, isLoggedIn, token,register, login, handleLoginSuccess, handleLogout, attemptLoginWithToken };
+  return { user, isLoggedIn, token, register, login, handleLogout };
 }

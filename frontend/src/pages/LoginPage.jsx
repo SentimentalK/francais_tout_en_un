@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import FormField from '../components/FormField';
@@ -41,6 +41,14 @@ export default function LoginPage() {
 
   const { login, register } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messageFromRedirect, setMessageFromRedirect] = useState('');
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessageFromRedirect(location.state.message);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -98,8 +106,11 @@ export default function LoginPage() {
           password: formData.password
         };
         await login(credentials);
+        const from = location.state?.from || '/';
+        navigate(from, { replace: true });
       } else {
         await register(formData);
+        navigate('/')
       }
     } catch (error) {
       console.error(`${activeTab} error:`, error);

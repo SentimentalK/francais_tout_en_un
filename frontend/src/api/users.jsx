@@ -1,48 +1,34 @@
-export async function fetchUserInfo(token) {
-  const res = await fetch('/api/user/info', {
-    headers: { 'Authorization': `Bearer ${token}`}
-  });
+import apiClient from './service'
 
-  if (!res.ok) {
-    if (res.status === 401 || res.status === 403) {
-      const error = new Error('Authentication failed or forbidden.');
-      error.status = res.status;
-      throw error;
-    }
-    throw new Error('Failed to fetch user info.');
+export async function fetchUserInfo() {
+  try {
+    const res = await apiClient.get('/user/info');
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user_info: ",error.config?.url, error.message);
+    throw error;
   }
-  return res.json();
 }
 
 export async function loginUser(credentials) {
-  const response = await fetch('/api/user/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Login failed. Please check your credentials.');
+  const url = '/user/login';
+  try {
+    const res = await apiClient.post(url, JSON.stringify(credentials));
+    return res.data.access_token;
+  } catch (error) {
+    console.error("Error Login failed: ",error.config?.url, error.message);
+    throw error;
   }
-  if (!data.access_token) {
-    throw new Error('Login successful, but no access token received.');
-  }
-  return data.access_token;
 }
 
 export async function registerUser(userData) {
+  const url = '/user/register';
   const { confirm_password, terms, ...payload } = userData;
-  const response = await fetch('/api/user/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Registration failed. Please try again.');
+  try {
+    const res = await apiClient.post(url, JSON.stringify(payload));
+    return res.data.access_token;
+  } catch (error) {
+    console.error("Error Register failed: ",error.config?.url, error.message);
+    throw error;
   }
-  if (!data.access_token) {
-    throw new Error('Registration successful, but no access token received.');
-  }
-  return data.access_token;
 }

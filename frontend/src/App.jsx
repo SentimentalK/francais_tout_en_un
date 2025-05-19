@@ -1,17 +1,29 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react';
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import CoursePage from './pages/CoursePage'
+import { configureAxiosInterceptors } from './api/service';
+import { useNavigate } from 'react-router-dom';
+
+const AxiosInterceptorSetup = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    configureAxiosInterceptors(navigate);
+  }, [navigate]);
+  return null;
+};
 
 export default function App() {
   return (
     <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/courses/:courseId" element={<CoursePage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+      <AxiosInterceptorSetup />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   )
 }
