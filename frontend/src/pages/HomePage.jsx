@@ -35,10 +35,15 @@ export default function HomePage() {
       });
     }
 
-    return baseCourses.map(course => ({
-      ...course, 
-      purchased: purchasedCourseIds.has(course.course),
-    }));
+    return baseCourses.map(course => {
+      const priceAsNumber = parseFloat(course.price);
+      return {
+        ...course,
+        price: priceAsNumber,
+        purchased: purchasedCourseIds.has(course.course_id),
+        free: priceAsNumber === 0,
+      };
+    });
   }, [coursesData, entitlementsData, isLoggedIn]);
 
   const filteredCourses = useMemo(() => {

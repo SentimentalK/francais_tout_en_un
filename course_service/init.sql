@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS contents (
-    course INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
     seq INTEGER NOT NULL,
     french TEXT NOT NULL,
     english TEXT NOT NULL,
-    PRIMARY KEY (course, seq)
+    PRIMARY KEY (course_id, seq)
 );
 
-INSERT INTO contents (course, seq, french, english) VALUES
+INSERT INTO contents (course_id, seq, french, english) VALUES
 (1,1,'Bonjour Jeanne, comment allez-vous ?','Hello, Jeanne. How are you?'),
 (1,2,'Bien, et vous ?','Well, and you?'),
 (1,3,'Ça va très bien, merci.','Very Well, thanks.'),
@@ -330,6 +330,10 @@ INSERT INTO contents (course, seq, french, english) VALUES
 (33,15,'Non, je ne vois rien qui m''intéresse. Mais merci quand même ! À demain.','No, I can''t see anything that interests me. But thank you all the (even), same! See you (to), tomorrow.');
 
 CREATE VIEW courses AS
-SELECT DISTINCT course,
-       CASE WHEN course BETWEEN 1 and 3 THEN 1 ELSE 0 END AS free
+SELECT DISTINCT course_id,
+    CASE
+        WHEN course_id <= 3 THEN 0.00
+        WHEN course_id <= 10 THEN 9.99
+        ELSE 10 + (course_id - 10) * 2.00 - 0.01
+    END AS price
 FROM contents;

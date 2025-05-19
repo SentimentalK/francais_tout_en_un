@@ -11,8 +11,8 @@ export default function CourseList({ courses }) {
       <ul className='course-list'>
         {courses.map(course => (
           <CourseItem
-            key={course.course}
-            course_id={course.course}
+            key={course.course_id}
+            course_id={course.course_id}
             isFree={course.free}
             purchased={course.purchased}
           />

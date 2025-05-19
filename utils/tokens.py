@@ -34,12 +34,26 @@ class TokenAuthority:
             raise HTTPException(status_code=401, detail=f"Invalid token {token}")
         
     @staticmethod
+    def get_optional_user_id(authorization: Optional[str] = Header(None)) -> Optional[str]:
+        if not authorization:
+            return None
+        token = authorization.split(" ")[1]
+        try:
+            payload = TokenAuthority.verify_token(token)
+            return payload['sub']
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, jwt.DecodeError) as e:
+            return None
+        except Exception as e:
+            return None
+
+    @staticmethod
     def get_user_id(authorization: Optional[str] = Header(None)) -> str:
-        if not authorization or not authorization.startswith("Bearer "):
+        
+        user_id = TokenAuthority.get_optional_user_id(authorization=authorization)
+        
+        if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Missing or invalid Authorization header"
+                detail="Missing or invalid Authorization header, or token is invalid/expired."
             )
-        token = authorization.split(" ")[1]
-        payload = TokenAuthority.verify_token(token)
-        return payload['sub']
+        return user_id
