@@ -46,7 +46,7 @@ const CourseContentPage = () => {
     audioFetchErrorData,
 
     backendDeniedAccess,
-  } = useCourseData(numericCourseId, token, shouldRequestContent);
+  } = useCourseData(numericCourseId, shouldRequestContent);
 
 
   const handlePlayButtonClick = () => {
@@ -72,7 +72,6 @@ const CourseContentPage = () => {
     }
   };
 
-  console.log(routeState, shouldRequestContent)
   if ((routeState && !shouldRequestContent) || backendDeniedAccess) {
     return (
       <div id="content-container" className="page-container">
