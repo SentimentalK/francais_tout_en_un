@@ -33,6 +33,9 @@ class OrderModel(Base):
 
 Base.metadata.create_all(bind=engine)
 
+class PaymentCallbackPayload(BaseModel):
+    outcome: Optional[str] = "success"
+
 class OrderRequest(BaseModel):
     course_ids: List[int]
 

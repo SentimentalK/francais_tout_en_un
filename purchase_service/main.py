@@ -17,7 +17,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from aiokafka import AIOKafkaProducer
 from sqlalchemy.orm import Session
-from db import OrderModel, OrderRequest, OrderResponse, OrderStatus, get_db
+from db import OrderModel, OrderRequest, OrderResponse, OrderStatus, PaymentCallbackPayload, get_db
 
 KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP")
 KAFKA_TOPIC_PURCHASE = os.getenv("KAFKA_TOPIC_PURCHASE", "course.purchased")
@@ -58,7 +58,7 @@ def create_order(
         order_id=order_id,
         user_id=uuid.UUID(user_id),
         course_ids=req.course_ids,
-        amount=total,
+        amount=round(total,2),
         status="PENDING"
     )
     db.add(order)
@@ -67,31 +67,29 @@ def create_order(
     payment_url = f"/purchase/{order_id}"
     return OrderResponse(order_id=order_id, payment_url=payment_url, amount=total)
 
-@app.get("/api/purchase/pay/{order_id}", response_class=HTMLResponse)
-def pay_page(order_id: str):
-    html = f"""
-    <html><body>
-      <h3>payment simulation</h3>
-      <p>Order ID: {order_id}</p>
-      <form action="/api/purchase/{order_id}/callback" method="post">
-        <button type="submit">confirm</button>
-      </form>
-    </body></html>
-    """
-    return HTMLResponse(html)
-
 @app.post("/api/purchase/{order_id}/callback")
 async def payment_callback(
     order_id: str, 
+    payload: PaymentCallbackPayload,
     db: Session = Depends(get_db),
     user_id :str = Depends(TokenAuthority.get_user_id)
 ):
-    order = db.query(OrderModel).filter(OrderModel.order_id == order_id).first()
+    order = db.query(OrderModel).filter(
+        OrderModel.order_id == order_id,
+        OrderModel.user_id == user_id
+        ).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     if order.status not in ["PENDING","FAILED"]:
+        if order.status == "PAID" and payload.outcome == "success":
+            return {"message": "Already Paid."}
         raise HTTPException(status_code=400, detail="Order not in PENDING status")
 
+    if payload.outcome != "success":
+        order.status = "FAILED"
+        db.commit()
+        return {"message": "Payment failed as simulated."}
+    
     producer = await get_producer()
     event = {
         "user_id": user_id,

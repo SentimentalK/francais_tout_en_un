@@ -1,0 +1,125 @@
+.payment-page__container {
+    text-align: center;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.payment-page__simulation-notice {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+
+.order-summary__card {
+    text-align: left;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.order-summary__list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.order-summary__list-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.order-summary__list-item strong {
+    display: inline-block;
+    min-width: 100px;
+}
+
+.payment-actions__button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-actions__btn--success {
+    background-color: var(--primary-color) !important;
+    min-width: 240px;
+}
+
+.payment-actions__btn--success:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.payment-actions__btn--failure {
+    background-color: var(--error-color) !important;
+    min-width: 220px;
+}
+
+.payment-actions__btn--failure:hover {
+    filter: brightness(90%);
+}
+
+.payment-result__spinner-container {
+    margin-top: 2rem;
+}
+
+.payment-result__box {
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin-top: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.payment-result__box h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.payment-result__box p {
+    margin-bottom: 1.2rem;
+}
+
+.payment-result__box--success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.payment-result__box--failure {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.payment-result__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.payment-result__btn--retry-success {
+    background-color: var(--primary-color) !important;
+}
+
+.payment-result__btn--retry-success:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+.payment-result__btn--to-checkout {
+    background-color: #6c757d !important;
+}
+
+.payment-result__btn--to-checkout:hover {
+    background-color: #5a6268 !important;
+}
+
+.payment-page__fallback-container {
+    text-align: center;
+    padding-top: 3rem;
+}
+
+.payment-page__fallback-btn-checkout {
+    margin-top: 1rem;
+}
