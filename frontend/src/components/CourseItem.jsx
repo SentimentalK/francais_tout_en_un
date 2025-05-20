@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './CourseItem.css';
+import '../assets/CourseItem.css';
 
 export default function CourseItem({ course_id, isFree, purchased }) {
   return (

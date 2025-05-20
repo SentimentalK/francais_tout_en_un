@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage'
 import CoursePage from './pages/CoursePage'
 import CheckoutPage from './pages/CheckoutPage'
 import PaymentPage from './pages/PaymentPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
 import { configureAxiosInterceptors } from './api/service';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment/:orderId" element={<PaymentPage />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orders/:orderId" element={<OrderDetailPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

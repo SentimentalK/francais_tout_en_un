@@ -1,5 +1,5 @@
 import CourseItem from './CourseItem';
-import './CourseList.css';
+import '../assets/CourseList.css';
 
 export default function CourseList({ courses }) {
   if (!courses || courses.length === 0) {

@@ -27,7 +27,7 @@ export default function HomePage() {
 
   const enrichedCourses = useMemo(() => {
     const baseCourses = Array.isArray(coursesData) ? coursesData : [];
-    
+
     let purchasedCourseIds = new Set();
     if (isLoggedIn && Array.isArray(entitlementsData)) {
       entitlementsData.forEach(entitlement => {
@@ -67,7 +67,9 @@ export default function HomePage() {
 
   return (
     <div className="container">
-      <NavBar user={user} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+        <NavBar />
+      </div>
       <h1>Assimil French Course</h1>
 
       <div className="course-container">

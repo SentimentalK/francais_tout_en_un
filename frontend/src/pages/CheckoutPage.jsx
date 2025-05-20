@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useCheckout from '../hooks/useCheckout';
 import CheckoutCourseItem from '../components/CheckoutCourseItem';
 import '../assets/content.css';
@@ -43,8 +43,17 @@ const CheckoutPage = () => {
 
     return (
         <div className="course-container checkout-page-container">
-            <h1>Select Courses to Purchase</h1>
 
+            <div className='nav-container'
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    margin: '0px'
+                }}><Link to="/" >
+                    <h1 style={{ margin: '0px' }}>Select Courses to Purchase</h1>
+                </Link>
+            </div>
             {allCourses.length === 0 && !isLoading && (
                 <p className="checkout-page__no-courses">No courses available for purchase at the moment.</p>
             )}
@@ -58,14 +67,14 @@ const CheckoutPage = () => {
                     />
                 ))}
             </div>
-            
+
             <div className="checkout-page__actions-footer">
                 <div className="checkout-page__selection-toggles">
                     {purchasableCoursesCount > 0 && (
                         <>
                             <button
                                 onClick={selectAllPurchasable}
-                                className="checkout-page__link-button" 
+                                className="checkout-page__link-button"
                             >
                                 Select All
                             </button>

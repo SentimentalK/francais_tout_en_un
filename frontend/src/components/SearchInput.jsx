@@ -1,4 +1,4 @@
-import './SearchInput.css';
+import '../assets/SearchInput.css';
 
 export default function SearchInput({ value, onChange, placeholder }) {
     return (

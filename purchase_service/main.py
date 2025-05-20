@@ -126,7 +126,7 @@ def get_order_status(order_id: str, db: Session = Depends(get_db)):
             refunded_at=order.refunded_at.isoformat() if order.refunded_at else None
         )
 
-@app.get("/api/purchase", response_model=List[OrderStatus])
+@app.get("/api/purchase/", response_model=List[OrderStatus])
 def list_entitlements(
         user_id :str = Depends(TokenAuthority.get_user_id),
         db: Session = Depends(get_db)

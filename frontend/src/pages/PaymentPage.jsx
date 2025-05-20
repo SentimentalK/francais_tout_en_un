@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 import usePayment from '../hooks/usePayment';
 import OrderSummary from '../components/OrderSummary';
 import PaymentActionButtons from '../components/PaymentActionButtons';
@@ -20,7 +20,14 @@ const PaymentPage = () => {
     
     return (
         <div className="course-container payment-page__container">
-            <h1>Simulated Payment</h1>
+            <div className='nav-container'
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginBottom: '0px'
+                }}><Link to="/"><h1 style={{ margin: '0px' }}>Simulated Payment</h1></Link>
+            </div>
             <p className="payment-page__simulation-notice">
                 This is a payment simulation environment. No real currency will be processed.
             </p>
