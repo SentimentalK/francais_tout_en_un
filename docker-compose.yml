@@ -1,15 +1,15 @@
 version: '3'
 services:
-  auth_database:
+  one_database:
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=authdb
+      - POSTGRES_DB=onedb
     ports:
       - "5433:5432"
     volumes:
-    - ./auth_service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -25,27 +25,11 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      auth_database:
+      one_database:
         condition: service_healthy
     environment:
       - SERVICE_PORT=8000
-      - DATABASE_URL=postgresql://postgres:1@auth_database:5432/authdb
-
-  course_database:
-    image: postgres:17-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=coursedb
-    ports:
-      - "5434:5432"
-    volumes:
-    - ./course_service/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
 
   course_service:
     build: 
@@ -56,13 +40,13 @@ services:
     ports:
       - "8001:8001"
     depends_on:
-      course_database:
+      one_database:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
       - SERVICE_PORT=8001
-      - DATABASE_URL=postgresql://postgres:1@course_database:5432/coursedb
+      - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
       - REDIS_HOST=redis
       - REDIS_PORT=6379
 
@@ -93,22 +77,6 @@ services:
       retries: 5
       start_period: 15s
 
-  purchase_database:
-    image: postgres:17-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=purchasedb
-    ports:
-      - "5435:5432"
-    volumes:
-    - ./purchase_service/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   purchase_service:
     build: 
       context: .
@@ -118,30 +86,14 @@ services:
     ports:
       - "8003:8003"
     depends_on:
-      purchase_database:
+      one_database:
         condition: service_healthy
       kafka:
         condition: service_healthy
     environment:
       - SERVICE_PORT=8003
-      - DATABASE_URL=postgresql://postgres:1@purchase_database:5432/purchasedb
+      - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
       - KAFKA_BOOTSTRAP=kafka:9092
-
-  entitlement_database:
-    image: postgres:17-alpine
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=entitledb
-    ports:
-      - "5436:5432"
-    volumes:
-    - ./entitlement_service/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   entitlement_service:
     build: 
@@ -152,7 +104,7 @@ services:
     ports:
       - "8004:8004"
     depends_on:
-      entitlement_database:
+      one_database:
         condition: service_healthy
       kafka:
         condition: service_healthy
@@ -160,7 +112,7 @@ services:
         condition: service_healthy
     environment:
       - SERVICE_PORT=8004
-      - DATABASE_URL=postgresql://postgres:1@entitlement_database:5432/entitledb
+      - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
       - KAFKA_BOOTSTRAP=kafka:9092
       - REDIS_HOST=redis
       - REDIS_PORT=6379

@@ -8,7 +8,7 @@ from typing import Optional
 
 JWT_SECRET = os.getenv("JWT_SECRET", "xinghan")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_SECONDS = os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", 900)
+ACCESS_TOKEN_EXPIRE_SECONDS = os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", 3600)
 
 
 class TokenAuthority:

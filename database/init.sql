@@ -1,3 +1,44 @@
+-- Auth Service
+
+CREATE TABLE IF NOT EXISTS users (
+    id              UUID    PRIMARY KEY         DEFAULT gen_random_uuid(),
+    username        TEXT    UNIQUE              NOT NULL,
+    email           TEXT    UNIQUE              NOT NULL,
+    password_hash   TEXT    NOT NULL,
+    created_at      TIMESTAMP WITH TIME ZONE    DEFAULT now()
+);
+
+-- Entitlement Service
+CREATE TABLE entitlements (
+  id               BIGSERIAL  PRIMARY KEY,
+  user_id          UUID       NOT NULL,
+  course_id        INTEGER    NOT NULL,
+  order_id         UUID       NOT NULL,
+  entitled_at      TIMESTAMP  NOT NULL DEFAULT now(),
+  CONSTRAINT uq_user_course   UNIQUE(user_id, course_id)
+);
+CREATE INDEX idx_ent_user   ON entitlements(user_id);
+CREATE INDEX idx_ent_course ON entitlements(course_id);
+
+-- Purchase Service
+CREATE TABLE orders (
+  order_id        UUID              PRIMARY KEY,
+  user_id         UUID              NOT NULL,
+  course_ids      INTEGER[]         NOT NULL,
+  amount          DECIMAL(10,2)     NOT NULL,
+  currency        VARCHAR(3)        NOT NULL DEFAULT 'USD',
+  status          VARCHAR(20)       NOT NULL,
+  payment_gateway VARCHAR(50),
+  gateway_txn_id  VARCHAR(100),
+  created_at      TIMESTAMP         NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMP         NOT NULL DEFAULT now(),
+  refunded_at     TIMESTAMP,
+  refund_reason   TEXT
+);
+CREATE INDEX idx_orders_user   ON orders(user_id);
+CREATE INDEX idx_status        ON orders(status);
+
+-- Course Service
 CREATE TABLE IF NOT EXISTS contents (
     course_id INTEGER NOT NULL,
     seq INTEGER NOT NULL,
@@ -36,7 +77,7 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (6,2,'Bonsoir, nous avons une chambre réservée pour deux nuits.','Good evening, we have a room reserved for two nights.'),
 (6,3,'Quel est votre nom, s''il vous plaît ?','What is your name, please?'),
 (6,4,'Je m''appelle Bailly : B-A-I deux L-Y. Alain.','My name is Bailly: B-A-I-double-L-Y. Alain.'),
-(6,5,'Absolument : une grande chambre avec un grand li et une salle de bains.','Absolutely: a large room with a double bed and a bathroom.'),
+(6,5,'Absolument : une grande chambre avec un grand lit et une salle de bains.','Absolutely: a large room with a double bed and a bathroom.'),
 (6,6,'C''est au quatrième étage. Voici la clé.','It''s on the fourth floor. Here''s the key.'),
 (6,7,'Où sont vos bagages ?','Where are your bags?'),
 (8,1,'Bonjour mademoiselle, est-ce que votre père est à la maison?','Good morning, miss. Is your father at home?'),
@@ -70,13 +111,13 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (11,1,'Pourquoi allons-nous au marché ? Il est trop cher.','Why we are going to the market? It''s too expensive.'),
 (11,2,'Parce que tous les placards sont vides !','Because all the cupboardz are empty.'),
 (11,3,'Nous avons besoin de tout : de fruits et de légumes,','We need everything: fruit, vegetables,'),
-(11,4,'mais aussi de pain, de fromage, de beurre, de crème, de jambon, et...','but also bread, butter, cream and...'),
+(11,4,'mais aussi de pain, de fromage, de beurre, de crème, de jambon, et...','but also bread, butter, cream, ham and...'),
 (11,5,'Bon, je comprends. Il n''y a rien à manger. Allons-y.','OK, I understand. There is nothing to eat. Let''s go.'),
 (11,6,'Bonjour madame. qu''est-ce que je peux faire pour vous ?','Good morning, madam. What can I do for you?'),
-(11,7,'Je vais acherter une livere de cerises, un kilo de pommes,','I''m going to buy a pound of cherries, a kilo of apples,'),
+(11,7,'Je vais acherter une livre de cerises, un kilo de pommes,','I''m going to buy a pound of cherries, a kilo of apples,'),
 (11,8,'trois cents grammes de champinons, s''ils ne sont pas trop chers,','300 grams of mushrooms, if they are not too expensive,'),
 (11,9,'quelques bananes, deux kilos de pommes de terre et un peu de lait frais.','a few bananas, two kilo of potatoes and a little fresh milk.'),
-(12,1,'Et avec ceci ? Vous voulez des fraises, peut-étre ?','And with that? Do you want some strawberries, perhaps?'),
+(12,1,'Et avec ceci ? Vous voulez des fraises, peut-être ?','And with that? Do you want some strawberries, perhaps?'),
 (12,2,'Est-ce que je peux les goûter ?','Can I taste them?'),
 (12,3,'Allez-y. N''hésitez pas ! Toutes mes fraises sont bio.','Go ahead. Don''t hesitate. All my strawberries are organic.'),
 (12,4,'Mm, c''est vrai, elles sont vraiment délicieuses. Elles sont à combien ?','Mm. It''s true. They are really delicious. How much are they?'),
