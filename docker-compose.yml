@@ -125,11 +125,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - auth_service
       - course_service
       # - purchase_service
       # - entitlement_service
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
 
   redis:
     image: redis:7-alpine
