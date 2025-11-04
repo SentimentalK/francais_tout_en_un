@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   one_database:
     image: postgres:17-alpine
@@ -54,6 +54,7 @@ services:
     image: bitnami/kafka:latest
     ports:
       - "9092:9092"
+    profiles: ["full"]
     environment:
       KAFKA_KRAFT_CLUSTER_ID: kraft-cluster
       KAFKA_CFG_NODE_ID: 1
@@ -85,6 +86,7 @@ services:
         - SERVICE_DIR=purchase_service
     ports:
       - "8003:8003"
+    profiles: ["full"]
     depends_on:
       one_database:
         condition: service_healthy
@@ -106,8 +108,8 @@ services:
     depends_on:
       one_database:
         condition: service_healthy
-      kafka:
-        condition: service_healthy
+      # kafka:
+      #   condition: service_healthy
       redis:
         condition: service_healthy
     environment:
@@ -126,8 +128,8 @@ services:
     depends_on:
       - auth_service
       - course_service
-      - purchase_service
-      - entitlement_service
+      # - purchase_service
+      # - entitlement_service
 
   redis:
     image: redis:7-alpine

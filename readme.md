@@ -21,7 +21,7 @@ To run the application locally, ensure you have the following tools installed:
 **Run the Application**:
    
 ```
-docker-compose down && docker-compose up --build
+docker-compose down && docker-compose --profile full up --build
 ```
 
 **Access the Application**:

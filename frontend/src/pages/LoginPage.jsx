@@ -8,7 +8,7 @@ import '../assets/login.css';
 const validationRules = {
   login: {
     username: value => value.trim().length >= 3 || 'Username must be at least 3 characters',
-    password: value => value.length >= 6 || 'Password must be at least 6 characters'
+    // password: value => value.length >= 6 || 'Password must be at least 6 characters'
   },
   register: {
     username: value => {
