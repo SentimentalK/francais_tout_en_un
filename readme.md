@@ -5,7 +5,7 @@
 ## Tech Stack
 - **Backend**: Python (FastAPI + Uvicorn), SQLAlchemy
 - **Database**: PostgreSQL, Redis
-- **Messaging**: Kafka
+- **Messaging**: Kafka/Redis Stream
 - **Containerization**: Docker
 - **Frontend**: React
 - **Authentication**: JWT
@@ -21,7 +21,11 @@ To run the application locally, ensure you have the following tools installed:
 **Run the Application**:
    
 ```
-docker-compose down && docker-compose --profile full up --build
+docker compose down && docker compose up --build
+```
+or
+```
+docker-compose down && docker-compose --profile kafka up --build
 ```
 
 **Access the Application**:

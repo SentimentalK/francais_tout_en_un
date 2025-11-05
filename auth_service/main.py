@@ -26,6 +26,7 @@ def register(
         req: RegisterRequest, 
         service: AuthService = Depends(auth_service)
     ):
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This is personal use ONLY. Registration is disabled.")
     try:
         access_token = service.register(
             username=req.username,

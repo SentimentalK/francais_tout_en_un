@@ -7,6 +7,9 @@ from typing import Optional
 from datetime import datetime
 from requests.exceptions import RequestException
 
+import redis.asyncio as redis
+from redis.asyncio.connection import ConnectionPool
+
 from utils.tokens import TokenAuthority
 from utils.logs import setup_logging
 setup_logging()
@@ -24,6 +27,13 @@ KAFKA_TOPIC_PURCHASE = os.getenv("KAFKA_TOPIC_PURCHASE", "course.purchased")
 KAFKA_TOPIC_REFUND = os.getenv("KAFKA_TOPIC_REFUND", "course.refunded")
 COURSE_SERVICE_URL = os.getenv("COURSE_SERVICE_URL", "http://course_service:8001/api/courses/")
 
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+REDIS_STREAM_PURCHASE = KAFKA_TOPIC_PURCHASE
+REDIS_STREAM_REFUND = KAFKA_TOPIC_REFUND
+
+MESSAGING_BACKEND = os.getenv("MESSAGING_BACKEND", "kafka")
+
 producer: Optional[AIOKafkaProducer] = None
 async def get_producer() -> AIOKafkaProducer:
     global producer
@@ -31,6 +41,14 @@ async def get_producer() -> AIOKafkaProducer:
         producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP)
         await producer.start()
     return producer
+
+redis_pool: Optional[ConnectionPool] = None
+async def get_redis_connection() -> redis.Redis:
+    global redis_pool
+    if redis_pool is None:
+        logger.info(f"Initializing Redis connection pool for {REDIS_HOST}:{REDIS_PORT}")
+        redis_pool = redis.ConnectionPool(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
+    return redis.Redis(connection_pool=redis_pool)
 
 app = FastAPI(title="Order Service")
 
@@ -98,8 +116,22 @@ async def payment_callback(
         "purchased_at": order.created_at.isoformat()
     }
     try:
-        logger.info(f"event: {event}")
-        await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
+        if MESSAGING_BACKEND == "kafka":
+            logger.info(f"event: {event}")
+            await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
+        elif MESSAGING_BACKEND == "redis":
+            logger.info(f"Sending event to Redis Stream: {REDIS_STREAM_PURCHASE}")
+            r = await get_redis_connection()
+            # Redis Streams (xadd) requires a flat dict of strings.
+            # We must serialize the list of course_ids.
+            redis_event = {
+                "user_id": event["user_id"],
+                "order_id": event["order_id"],
+                "purchased_at": event["purchased_at"],
+                "course_ids": json.dumps(event["course_ids"])
+            }
+            await r.xadd(REDIS_STREAM_PURCHASE, redis_event)
+            await r.close()
     except Exception as e:
         logging.error(f"Kafka send failed: {e}")
         order.status = "FAILED"
@@ -163,7 +195,18 @@ async def refund_order(
         "order_id": order_id
     }
     try:
-        await producer.send_and_wait(KAFKA_TOPIC_REFUND, json.dumps(event).encode("utf-8"))
+        if MESSAGING_BACKEND == "kafka":
+            await producer.send_and_wait(KAFKA_TOPIC_REFUND, json.dumps(event).encode("utf-8"))
+        elif MESSAGING_BACKEND == "redis":
+            logger.info(f"Sending event to Redis Stream: {REDIS_STREAM_REFUND}")
+            r = await get_redis_connection()
+            redis_event = {
+                "user_id": event["user_id"],
+                "order_id": event["order_id"],
+                "course_ids": json.dumps(event["course_ids"])
+            }
+            await r.xadd(REDIS_STREAM_REFUND, redis_event)
+            await r.close()
     except Exception as e:
         logging.error(f"Kafka send failed: {e}")
         raise HTTPException(status_code=500, detail="Payment event send failed, please try again later.")
