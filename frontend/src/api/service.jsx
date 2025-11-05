@@ -32,6 +32,12 @@ export const configureAxiosInterceptors = (navigate) => {
       if (error.response) {
         const { status, data } = error.response;
 
+        const apiErrorMessage = data?.detail || data?.message || error.message;
+        
+        const enhancedError = new Error(apiErrorMessage);
+        enhancedError.response = error.response;
+        enhancedError.status = status;
+
         if (status === 401) {
           localStorage.removeItem('access_token');
 
@@ -45,12 +51,16 @@ export const configureAxiosInterceptors = (navigate) => {
             });
           }
         }
+
+        return Promise.reject(enhancedError);
       } else if (error.request) {
         console.error('Network Error or No Response:', error.request);
+        const networkError = new Error('Network error: Unable to reach the server');
+        return Promise.reject(networkError);
       } else {
         console.error('Error setting up request:', error.message);
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
     }
   );
 };
