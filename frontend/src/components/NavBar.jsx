@@ -31,6 +31,9 @@ export default function UserActionsMenu() {
         <Link to="/orders" className="user-actions-dropdown-item">
           My Orders
         </Link>
+        <Link to="/textbook" className="user-actions-dropdown-item">
+          Textbook
+        </Link>
         <Link to="/checkout" className="user-actions-dropdown-item">
           Purchase
         </Link>
