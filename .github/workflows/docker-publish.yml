@@ -1,0 +1,71 @@
+name: Build and Publish Docker Images
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-images:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+      
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: auth_service
+            dockerfile: ./Dockerfile
+            context: .
+            build-args: SERVICE_DIR=auth_service
+          - service: course_service
+            dockerfile: ./Dockerfile
+            context: .
+            build-args: SERVICE_DIR=course_service
+          - service: purchase_service
+            dockerfile: ./Dockerfile
+            context: .
+            build-args: SERVICE_DIR=purchase_service
+          - service: entitlement_service
+            dockerfile: ./Dockerfile
+            context: .
+            build-args: SERVICE_DIR=entitlement_service
+          - service: react_nginx
+            dockerfile: ./frontend/Dockerfile
+            context: ./frontend
+            build-args: ""
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: ${{ matrix.build-args }}

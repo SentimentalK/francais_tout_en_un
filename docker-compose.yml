@@ -16,6 +16,7 @@ services:
       retries: 10
 
   auth_service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/auth_service:latest
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -31,6 +32,7 @@ services:
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
 
   course_service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/course_service:latest
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -78,6 +80,7 @@ services:
       start_period: 15s
 
   purchase_service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/purchase_service:latest
     profiles: [ "commercial" ]
     build:
       context: .
@@ -98,6 +101,7 @@ services:
       - MESSAGING_BACKEND=${MESSAGING_BACKEND:-redis}
 
   entitlement_service:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/entitlement_service:latest
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -121,6 +125,7 @@ services:
       - MESSAGING_BACKEND=${MESSAGING_BACKEND:-redis}
 
   react_nginx:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/react_nginx:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -152,6 +157,13 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 --cleanup
+    restart: always
 
 volumes:
   redis-data:

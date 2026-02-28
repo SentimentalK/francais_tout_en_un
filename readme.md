@@ -36,6 +36,18 @@ docker compose --profile commercial --profile kafka up --build
 http://localhost
 ```
 
+## Production Deploy (Auto Deployment)
+This project is configured with a CI/CD pipeline using **GitHub Actions** and **Watchtower**.
+
+1. **Push to GitHub**: Every push to the `main` branch automatically builds and pushes the Docker images to GitHub Container Registry (GHCR).
+2. **Server Setup**: On your self-hosted server, pull the repository and simply run:
+   ```bash
+   docker compose pull && docker compose up -d
+   ```
+3. **Auto Updates**: The included Watchtower container runs in the background. It will automatically check for new images on GHCR every 5 minutes. When a new image is detected (from your GitHub push) it will automatically pull the new image and softly restart your services, with zero manual intervention required.
+
+*(Note: If your repository is private, you must first run `docker login ghcr.io -u <your-github-username>` on your server with a Personal Access Token).*
+
 ## Development
 **Restart & build single microservice**:
 ```
