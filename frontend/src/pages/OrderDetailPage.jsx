@@ -4,12 +4,12 @@ import OrderSummary from '../components/OrderSummary';
 import { useOrderDetailsData, useRefundOrder } from '../hooks/useOrders';
 import useCourses from '../hooks/useCourses';
 
-const PageSpinner = ({ message }) => <div className="checkout-page__spinner">{message || 'Loading...'}</div>;
+const PageSpinner = ({ message }) => <div className="mt-12 text-center text-slate-500 text-lg w-full">{message || 'Loading...'}</div>;
 
 const ResultDisplay = ({ status, title, message }) => (
-    <div className={`payment-result__box payment-result__box--${status === 'success' ? 'success' : 'failure'}`} style={{ marginTop: '1.5rem' }}>
-        <h3>{title}</h3>
-        <p>{message}</p>
+    <div className={`p-6 rounded-lg mt-8 max-w-2xl w-full mx-auto text-center border shadow-sm ${status === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
+        <h3 className="text-xl font-bold mb-3">{title}</h3>
+        <p className={`text-lg m-0 ${status === 'success' ? 'text-green-700' : 'text-red-700'}`}>{message}</p>
     </div>
 );
 
@@ -42,7 +42,7 @@ const OrderDetailPage = () => {
             return [];
         }
         const coursesMap = new Map(allCoursesData.map(course => [course.course_id, course]));
-        
+
         return currentOrder.course_ids.map(id => {
             const courseDetail = coursesMap.get(id);
             return {
@@ -56,23 +56,35 @@ const OrderDetailPage = () => {
 
     const displayOrder = orderData || initialOrderDataFromState;
     const isLoading = (isLoadingOrder && !initialOrderDataFromState) || isLoadingAllCourses;
-    
+
     let errorMessage = null;
     if (isOrderError) errorMessage = orderErrorData?.message || "Failed to load order details.";
     if (isAllCoursesError) errorMessage = (errorMessage ? errorMessage + " " : "") + (allCoursesError?.message || "Failed to load course data.");
-    
+
     if (isLoading) {
-        return <PageSpinner message="Loading order details..." />;
+        return (
+            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
+                <PageSpinner message="Loading order details..." />
+            </div>
+        );
     }
-    
+
     if (errorMessage) {
-        return <div className="checkout-page__error-display">Error: {errorMessage}</div>;
+        return (
+            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
+                <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-md my-4 font-medium w-full">Error: {errorMessage}</div>
+            </div>
+        );
     }
 
     if (!displayOrder && !isLoading) {
-      return <div className="checkout-page__error-display">Order details not found.</div>;
+        return (
+            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
+                <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-md my-4 font-medium w-full">Order details not found.</div>
+            </div>
+        );
     }
-    
+
     const finalOrderData = displayOrder;
 
     if (!finalOrderData) {
@@ -84,7 +96,7 @@ const OrderDetailPage = () => {
     const refundSucceeded = refundMutation.isSuccess;
     const refundFailed = refundMutation.isError;
     const refundError = refundMutation.error;
-    
+
     const handleRefund = () => {
         if (!finalOrderData || finalOrderData.status !== 'PAID' || finalOrderData.refunded_at) {
             alert('This order cannot be refunded or is already being processed.');
@@ -97,9 +109,9 @@ const OrderDetailPage = () => {
 
 
     return (
-        <div className="course-container payment-page__container">
-            <h1>Order Details</h1>
-            
+        <div className="max-w-4xl mx-auto w-full px-4 md:px-8 py-10 md:py-12 min-h-screen flex flex-col items-center">
+            <h1 className="text-3xl font-bold text-slate-800 mb-8 m-0">Order Details</h1>
+
             <OrderSummary
                 orderId={finalOrderData.order_id}
                 amount={finalOrderData.amount}
@@ -111,8 +123,6 @@ const OrderDetailPage = () => {
                     status="success"
                     title="Refund Processed"
                     message={refundMutation.data?.message || "Your refund request has been processed successfully. The order status is updated."}
-                    onNavigateLabel="Back to Orders"
-                    onNavigateAction={() => navigate('/orders')}
                 />
             )}
             {refundFailed && (
@@ -124,7 +134,7 @@ const OrderDetailPage = () => {
             )}
 
             {!isProcessingRefund && !refundSucceeded && !refundFailed && (
-                <>
+                <div className="w-full flex justify-center mt-2">
                     {finalOrderData.refunded_at && (
                         <ResultDisplay
                             status="success"
@@ -140,23 +150,22 @@ const OrderDetailPage = () => {
                         />
                     )}
                     {canRefund && (
-                        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                        <div className="mt-8 text-center w-full">
                             <button
                                 onClick={handleRefund}
-                                className="purchase-btn payment-actions__btn--failure"
+                                className="w-full sm:w-auto min-w-[240px] bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-md transition-colors focus:ring-4 focus:ring-red-500/20 disabled:opacity-50"
                                 disabled={isProcessingRefund}
-                                style={{minWidth: '200px'}}
                             >
                                 {isProcessingRefund ? 'Processing Refund...' : 'Request Refund'}
                             </button>
                         </div>
                     )}
-                </>
+                </div>
             )}
-             <button 
-                onClick={() => navigate('/orders')} 
-                className="purchase-btn" 
-                style={{backgroundColor: '#7f8c8d', marginTop: '1rem', display: 'block', marginLeft: 'auto', marginRight: 'auto'}}
+
+            <button
+                onClick={() => navigate('/orders')}
+                className="w-full sm:max-w-xs bg-slate-500 hover:bg-slate-600 text-white font-medium py-3 px-8 rounded-md transition-colors mt-12 block mx-auto focus:ring-4 focus:ring-slate-500/20"
                 disabled={isProcessingRefund}
             >
                 Back to My Orders

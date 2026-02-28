@@ -14,9 +14,15 @@ const OrderListItem = ({ order }) => {
         statusText = "Refunded";
     }
 
-    let itemClassName = "checkout-item"; 
+    let itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-4 my-3 bg-white border border-slate-200 rounded-lg transition-all duration-300 shadow-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-md hover:border-blue-300";
+
+    let statusClass = "font-medium text-sm px-3 py-1 rounded-md text-slate-600 bg-slate-100";
+
     if (refunded_at || status === 'REFUNDED') {
-        itemClassName += " checkout-item--disabled"; 
+        itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-4 my-3 bg-slate-50 border border-slate-200 rounded-lg opacity-80 cursor-pointer hover:bg-slate-100 transition-colors";
+        statusClass = "font-medium text-sm px-3 py-1 rounded-md text-red-700 bg-red-100";
+    } else if (status === 'PAID') {
+        statusClass = "font-medium text-sm px-3 py-1 rounded-md text-green-700 bg-green-100";
     }
 
     return (
@@ -26,33 +32,17 @@ const OrderListItem = ({ order }) => {
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleItemClick(); }}
-            style={{ cursor: 'pointer' }}
         >
-            <div className="checkout-item__details">
-                <span 
-                    className="verse-id checkout-item__course-id" 
-                    style={{ 
-                        minWidth: '200px', 
-                        overflow: 'hidden', 
-                        textOverflow: 'ellipsis', 
-                        whiteSpace: 'nowrap',
-                        marginRight: '1rem' 
-                    }}
-                >
+            <div className="flex items-center mb-3 sm:mb-0">
+                <span className="font-mono text-sm text-slate-500 w-48 sm:w-56 truncate mr-4">
                     Order ID: {order_id}
                 </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <span 
-                    className="checkout-item__status" 
-                    style={{ minWidth: '80px', marginRight: '1rem', textTransform: 'capitalize', textAlign: 'right' }}
-                >
+            <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0 mt-1 sm:mt-0">
+                <span className={statusClass}>
                     {statusText}
                 </span>
-                <span 
-                    className="checkout-item__status" 
-                    style={{ fontWeight: 'bold', minWidth: '90px', textAlign: 'right' }}
-                >
+                <span className="font-bold text-slate-800 min-w-[90px] text-right">
                     {currency || 'USD'} ${parseFloat(amount).toFixed(2)}
                 </span>
             </div>

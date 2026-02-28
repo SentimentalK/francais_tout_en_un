@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import OrderListItem from '../components/OrderListItem';
 import { useUserOrders } from '../hooks/useOrders';
 
-const PageSpinner = ({ message }) => <div className="checkout-page__spinner">{message || 'Loading...'}</div>;
+const PageSpinner = ({ message }) => <div className="text-center text-slate-500 text-lg py-12">{message || 'Loading...'}</div>;
 
 const OrdersPage = () => {
     const { data: orders, isLoading, isError, error } = useUserOrders();
@@ -13,23 +13,20 @@ const OrdersPage = () => {
     }
 
     if (isError) {
-        return <div className="checkout-page__error-display">Error fetching orders: {error?.message || 'Unknown error'}</div>;
+        return <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-md mx-auto max-w-2xl my-4 font-medium">Error fetching orders: {error?.message || 'Unknown error'}</div>;
     }
 
     return (
-        <div className="course-container payment-page__container">
-            <div className='nav-container'
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginBottom: '0px'
-                }}><Link to="/"><h1 style={{ margin: '0px' }}>My Orders</h1></Link>
+        <div className="max-w-4xl mx-auto w-full px-4 md:px-8 py-8 min-h-screen flex flex-col">
+            <div className='flex flex-col items-center mb-8'>
+                <Link to="/" className="text-slate-800 hover:text-blue-600 transition-colors no-underline">
+                    <h1 className="text-3xl font-bold m-0 text-center">My Orders</h1>
+                </Link>
             </div>
             {orders && orders.length === 0 ? (
-                <p className="checkout-page__no-courses" style={{ textAlign: 'center', margin: '2rem 0' }}>You have no orders yet.</p>
+                <p className="text-center text-lg py-8 text-slate-500">You have no orders yet.</p>
             ) : (
-                <div className="chapter checkout-page__course-list-container">
+                <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm grow border border-slate-100">
                     {orders?.map(order => (
                         <OrderListItem key={order.order_id} order={order} />
                     ))}

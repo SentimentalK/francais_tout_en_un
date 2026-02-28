@@ -1,23 +1,22 @@
 import CourseItem from './CourseItem';
-import '../assets/CourseList.css';
 
-export default function CourseList({ courses }) {
-  if (!courses || courses.length === 0) {
-    return null;
+export default function CourseList({ items }) {
+  if (!items || items.length === 0) {
+    return (
+      <div className="w-full text-center py-12 text-zinc-400">
+        No content available
+      </div>
+    );
   }
 
   return (
-    <div className='course-list-container'>
-      <ul className='course-list'>
-        {courses.map(course => (
-          <CourseItem
-            key={course.course_id}
-            course_id={course.course_id}
-            isFree={course.free}
-            purchased={course.purchased}
-          />
-        ))}
-      </ul>
+    <div id="generic-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 pb-10">
+      {items.map(item => (
+        <CourseItem
+          key={item.id || item.course_id}
+          item={item}
+        />
+      ))}
     </div>
   );
 }
