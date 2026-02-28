@@ -108,7 +108,6 @@ async def payment_callback(
         db.commit()
         return {"message": "Payment failed as simulated."}
     
-    producer = await get_producer()
     event = {
         "user_id": user_id,
         "course_ids": order.course_ids,
@@ -116,7 +115,10 @@ async def payment_callback(
         "purchased_at": order.created_at.isoformat()
     }
     try:
-        if MESSAGING_BACKEND == "kafka":
+        if MESSAGING_BACKEND == "none":
+            logger.info("Messaging disabled, skipping purchase event emission")
+        elif MESSAGING_BACKEND == "kafka":
+            producer = await get_producer()
             logger.info(f"event: {event}")
             await producer.send_and_wait(KAFKA_TOPIC_PURCHASE, json.dumps(event).encode("utf-8"))
         elif MESSAGING_BACKEND == "redis":
@@ -133,7 +135,7 @@ async def payment_callback(
             await r.xadd(REDIS_STREAM_PURCHASE, redis_event)
             await r.close()
     except Exception as e:
-        logging.error(f"Kafka send failed: {e}")
+        logging.error(f"Messaging send failed: {e}")
         order.status = "FAILED"
         db.commit()
         raise HTTPException(status_code=500, detail="Payment event send failed, please try again later.")
@@ -188,14 +190,16 @@ async def refund_order(
     if order.status != "PAID":
         raise HTTPException(status_code=400, detail="Order not in PAID status")
 
-    producer = await get_producer()
     event = {
         "user_id": user_id,
         "course_ids": order.course_ids,
         "order_id": order_id
     }
     try:
-        if MESSAGING_BACKEND == "kafka":
+        if MESSAGING_BACKEND == "none":
+            logger.info("Messaging disabled, skipping refund event emission")
+        elif MESSAGING_BACKEND == "kafka":
+            producer = await get_producer()
             await producer.send_and_wait(KAFKA_TOPIC_REFUND, json.dumps(event).encode("utf-8"))
         elif MESSAGING_BACKEND == "redis":
             logger.info(f"Sending event to Redis Stream: {REDIS_STREAM_REFUND}")
@@ -208,7 +212,7 @@ async def refund_order(
             await r.xadd(REDIS_STREAM_REFUND, redis_event)
             await r.close()
     except Exception as e:
-        logging.error(f"Kafka send failed: {e}")
+        logging.error(f"Messaging send failed: {e}")
         raise HTTPException(status_code=500, detail="Payment event send failed, please try again later.")
     order.status = "REFUNDED"
     order.refunded_at = datetime.now()

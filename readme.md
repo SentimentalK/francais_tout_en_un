@@ -20,12 +20,15 @@ To run the application locally, ensure you have the following tools installed:
 
 **Run the Application**:
    
-```
-docker compose down && docker compose up --build
-```
-or
-```
-docker-compose down && docker-compose --profile kafka up --build
+```bash
+# Demo mode (no purchase service, all courses accessible for logged-in users)
+MESSAGING_BACKEND=none docker compose up --build
+
+# Commercial mode with Redis Stream messaging
+docker compose --profile commercial up --build
+
+# Commercial mode with Kafka messaging
+docker compose --profile commercial --profile kafka up --build
 ```
 
 **Access the Application**:

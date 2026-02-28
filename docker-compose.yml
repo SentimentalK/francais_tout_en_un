@@ -8,15 +8,15 @@ services:
     ports:
       - "5433:5432"
     volumes:
-    - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 10
-  
+
   auth_service:
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfile
       args:
@@ -31,7 +31,7 @@ services:
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
 
   course_service:
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfile
       args:
@@ -53,7 +53,7 @@ services:
     image: bitnami/kafka:latest
     ports:
       - "9092:9092"
-    profiles: ["kafka"]
+    profiles: [ "kafka" ]
     environment:
       KAFKA_KRAFT_CLUSTER_ID: kraft-cluster
       KAFKA_CFG_NODE_ID: 1
@@ -71,14 +71,15 @@ services:
     # volumes:
     #   - kafka_data:/bitnami/kafka
     healthcheck:
-      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      test: [ "CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 15s
 
   purchase_service:
-    build: 
+    profiles: [ "commercial" ]
+    build:
       context: .
       dockerfile: ./Dockerfile
       args:
@@ -94,10 +95,10 @@ services:
       - SERVICE_PORT=8003
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
       - KAFKA_BOOTSTRAP=kafka:9092
-      - MESSAGING_BACKEND=redis
+      - MESSAGING_BACKEND=${MESSAGING_BACKEND:-redis}
 
   entitlement_service:
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfile
       args:
@@ -117,8 +118,8 @@ services:
       - KAFKA_BOOTSTRAP=kafka:9092
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - MESSAGING_BACKEND=redis
-  
+      - MESSAGING_BACKEND=${MESSAGING_BACKEND:-redis}
+
   react_nginx:
     build:
       context: ./frontend
@@ -129,14 +130,13 @@ services:
     depends_on:
       - auth_service
       - course_service
-      - purchase_service
       - entitlement_service
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
       - ./course_service/src:/usr/share/nginx/textbook:ro
       # dev config
-      # - ./frontend/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/nginx.dev.conf:/etc/nginx/nginx.conf:ro
 
   redis:
     image: redis:7-alpine
@@ -144,10 +144,10 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    command: ["redis-server", "--save", "60 1"]
+    command: [ "redis-server", "--save", "60 1" ]
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping"]
+      test: [ "CMD-SHELL", "redis-cli ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -155,4 +155,3 @@ services:
 
 volumes:
   redis-data:
-    

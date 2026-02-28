@@ -1,6 +1,8 @@
 import os
+import uuid
 import asyncio
 import json
+import requests
 from typing import List
 
 from fastapi import FastAPI, Depends
@@ -32,6 +34,7 @@ REDIS_STREAM_REFUND = refund_topic
 
 MESSAGING_BACKEND = os.getenv("MESSAGING_BACKEND", "kafka")
 CONSUMER_GROUP_NAME = "entitlement-service-group"
+COURSE_SERVICE_URL = os.getenv("COURSE_SERVICE_URL", "http://course_service:8001/api/courses/")
 
 redis_pool: ConnectionPool = None
 async def get_redis_connection() -> redis.Redis:
@@ -50,6 +53,19 @@ def list_entitlements(
         user_id :str = Depends(TokenAuthority.get_user_id),
         db: Session = Depends(get_db)
     ):
+    if MESSAGING_BACKEND == "none":
+        # Demo mode: return all courses as entitled
+        try:
+            courses = requests.get(COURSE_SERVICE_URL, timeout=5).json()
+            course_ids = [c["course_id"] for c in courses]
+            if course_ids:
+                redis_cache.add_courses(user_id, course_ids)
+            dummy_order_id = uuid.UUID(int=0)
+            return [EntitlementOut(course_id=cid, order_id=dummy_order_id) for cid in course_ids]
+        except Exception as e:
+            logger.error(f"Demo mode: failed to fetch courses: {e}")
+            return []
+
     ents = db.query(Entitlement).filter(Entitlement.user_id == user_id).all()
     course_ids = [e.course_id for e in ents]
     if course_ids:
@@ -62,6 +78,9 @@ def check_entitlement(
     db: Session = Depends(get_db),
     user_id :str = Depends(TokenAuthority.get_user_id)
 ):
+    if MESSAGING_BACKEND == "none":
+        return CheckEntitlement(has_access=True)
+
     ent = db.query(Entitlement).filter(
         Entitlement.user_id == user_id,
         Entitlement.course_id == course_id
@@ -200,7 +219,9 @@ async def process_event_logic(topic: str, user_id: str, order_id: str, course_id
 
 @app.on_event("startup")
 async def startup_event():
-    if MESSAGING_BACKEND == "redis":
+    if MESSAGING_BACKEND == "none":
+        logger.info("Messaging disabled (MESSAGING_BACKEND=none), no consumer started")
+    elif MESSAGING_BACKEND == "redis":
         asyncio.create_task(consume_redis_events())
     elif MESSAGING_BACKEND == "kafka":
         asyncio.create_task(consume_kafka_events())
