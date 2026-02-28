@@ -14,15 +14,15 @@ const OrderListItem = ({ order }) => {
         statusText = "Refunded";
     }
 
-    let itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-4 my-3 bg-white border border-slate-200 rounded-lg transition-all duration-300 shadow-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-md hover:border-blue-300";
+    let itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white ring-1 ring-zinc-200 rounded-2xl transition-all duration-300 shadow-sm cursor-pointer hover:-translate-y-0.5 hover:shadow-md hover:ring-zinc-300";
 
-    let statusClass = "font-medium text-sm px-3 py-1 rounded-md text-slate-600 bg-slate-100";
+    let statusClass = "font-semibold tracking-wide text-xs px-3 py-1.5 rounded-full text-zinc-700 bg-zinc-100 ring-1 ring-zinc-900/5";
 
     if (refunded_at || status === 'REFUNDED') {
-        itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-4 my-3 bg-slate-50 border border-slate-200 rounded-lg opacity-80 cursor-pointer hover:bg-slate-100 transition-colors";
-        statusClass = "font-medium text-sm px-3 py-1 rounded-md text-red-700 bg-red-100";
+        itemClassName = "flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-zinc-50 ring-1 ring-zinc-200/60 rounded-2xl opacity-80 cursor-pointer hover:bg-zinc-100 transition-colors";
+        statusClass = "font-semibold tracking-wide text-xs px-3 py-1.5 rounded-full text-rose-700 bg-rose-50 ring-1 ring-rose-900/5";
     } else if (status === 'PAID') {
-        statusClass = "font-medium text-sm px-3 py-1 rounded-md text-green-700 bg-green-100";
+        statusClass = "font-semibold tracking-wide text-xs px-3 py-1.5 rounded-full text-emerald-700 bg-emerald-50 ring-1 ring-emerald-900/5";
     }
 
     return (
@@ -33,17 +33,20 @@ const OrderListItem = ({ order }) => {
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleItemClick(); }}
         >
-            <div className="flex items-center mb-3 sm:mb-0">
-                <span className="font-mono text-sm text-slate-500 w-48 sm:w-56 truncate mr-4">
-                    Order ID: {order_id}
+            <div className="flex flex-col mb-4 sm:mb-0">
+                <span className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-1">
+                    Order Ref
+                </span>
+                <span className="font-mono text-sm text-zinc-900 w-48 sm:w-auto truncate mr-4 font-medium">
+                    {order_id}
                 </span>
             </div>
-            <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 border-t sm:border-t-0 border-slate-100 pt-3 sm:pt-0 mt-1 sm:mt-0">
+            <div className="flex items-center justify-between sm:justify-end gap-6 shrink-0 border-t sm:border-t-0 border-zinc-100 pt-4 sm:pt-0">
                 <span className={statusClass}>
                     {statusText}
                 </span>
-                <span className="font-bold text-slate-800 min-w-[90px] text-right">
-                    {currency || 'USD'} ${parseFloat(amount).toFixed(2)}
+                <span className="font-extrabold text-lg text-zinc-900 tracking-tight min-w-[90px] text-right">
+                    ${parseFloat(amount).toFixed(2)} {(currency || 'USD')}
                 </span>
             </div>
         </div>

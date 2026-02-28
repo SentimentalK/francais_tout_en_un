@@ -5,10 +5,11 @@ import useCourseData from '../hooks/useCourseData';
 import PurchasePrompt from '../components/PurchasePrompt';
 import ContentPageNav from '../components/ContentPageNav';
 import CourseSentenceItem from '../components/CourseSentenceItem';
-import { Layers, Play, Pause, AlertCircle } from 'lucide-react';
+import NavBar from '../components/NavBar';
+import { Layers, Play, Pause, AlertCircle, Repeat } from 'lucide-react';
 
 const PageSpinner = ({ message }) => <div className="text-center text-zinc-500 my-12 text-lg">{message || 'Loading...'}</div>;
-const ErrorDisplay = ({ message }) => <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl max-w-2xl mx-auto my-10 font-medium flex flex-col items-center gap-2"><AlertCircle className="w-6 h-6" /> {message || 'An error occurred.'}</div>;
+const ErrorDisplay = ({ message }) => <div className="text-center p-4 bg-rose-50 ring-1 ring-rose-200 text-rose-600 rounded-2xl max-w-2xl mx-auto my-10 font-medium flex flex-col items-center gap-2"><AlertCircle className="w-6 h-6" /> {message || 'An error occurred.'}</div>;
 
 const CourseContentPage = () => {
 
@@ -74,94 +75,129 @@ const CourseContentPage = () => {
 
   if ((routeState && !shouldRequestContent) || backendDeniedAccess) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-10 w-full font-sans">
-        <ContentPageNav currentCourseId={numericCourseId} />
-        <div className="bg-white p-8 md:p-14 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-zinc-900/5 max-w-4xl mx-auto">
-          <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 ring-1 ring-zinc-100">
-            <Layers className="w-8 h-8 text-zinc-800" />
+      <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+        <NavBar />
+        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow">
+          <ContentPageNav currentCourseId={numericCourseId} />
+          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-zinc-900/5 mb-8 flex flex-col items-center">
+            <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 ring-1 ring-zinc-100">
+              <Layers className="w-8 h-8 text-zinc-800" />
+            </div>
+            <h2 className="text-3xl font-extrabold text-zinc-900 mb-3 tracking-tight">{displayCourseTitle}</h2>
+            <PurchasePrompt courseId={numericCourseId} isLoggedIn={isLoggedIn} />
           </div>
-          <h2 className="text-3xl font-extrabold text-zinc-900 mb-3 tracking-tight">{displayCourseTitle}</h2>
-          <PurchasePrompt courseId={numericCourseId} isLoggedIn={isLoggedIn} />
-        </div>
+        </main>
       </div>
     );
   }
 
   if (isLoadingSentences) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-10 w-full font-sans">
-        <ContentPageNav currentCourseId={numericCourseId} />
-        <PageSpinner message={`Loading content for ${displayCourseTitle}...`} />
+      <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+        <NavBar />
+        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow">
+          <ContentPageNav currentCourseId={numericCourseId} />
+          <PageSpinner message={`Loading content for ${displayCourseTitle}...`} />
+        </main>
       </div>
     );
   }
 
   if (isSentenceFetchError) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-10 w-full font-sans">
-        <ContentPageNav currentCourseId={numericCourseId} />
-        <ErrorDisplay message={sentenceFetchErrorData?.message || `Error loading sentences for ${displayCourseTitle}.`} />
+      <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+        <NavBar />
+        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow">
+          <ContentPageNav currentCourseId={numericCourseId} />
+          <ErrorDisplay message={sentenceFetchErrorData?.message || `Error loading sentences for ${displayCourseTitle}.`} />
+        </main>
       </div>
     );
   }
 
   if (sentences) {
     return (
-      <div className="max-w-6xl mx-auto px-6 py-10 w-full flex flex-col min-h-screen font-sans">
-        <ContentPageNav currentCourseId={numericCourseId} />
+      <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+        <NavBar />
+        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow">
+          <ContentPageNav currentCourseId={numericCourseId} />
 
-        <div className="bg-white p-8 md:p-14 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-zinc-900/5 max-w-4xl mx-auto w-full">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-zinc-100">
-            <div>
-              <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-6 ring-1 ring-zinc-100">
-                <Layers className="w-8 h-8 text-zinc-800" />
+          {/* 全局播控卡片 */}
+          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-zinc-900/5 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+
+              {/* 左侧：播放与标题 */}
+              <div className="flex items-center gap-5">
+                <button
+                  id={`play-${numericCourseId}`}
+                  onClick={handlePlayButtonClick}
+                  disabled={isLoadingAudio && !audioPlayerState.src}
+                  className="w-14 h-14 shrink-0 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:bg-zinc-800 shadow-md transition-transform hover:scale-105 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+                  aria-label={audioPlayerState.isPlaying ? `Pause audio for ${displayCourseTitle}` : `Play audio for ${displayCourseTitle}`}
+                >
+                  {audioPlayerState.isPlaying ? (
+                    <Pause className="w-6 h-6 fill-current" />
+                  ) : (
+                    <Play className="w-6 h-6 ml-1 fill-current" />
+                  )}
+                </button>
+                <div>
+                  <span id="lesson-index-badge" className="text-sm text-zinc-400 font-mono font-medium block mb-0.5">Leçon {numericCourseId} / 100</span>
+                  <h2 id="detail-title" className="text-2xl font-extrabold text-zinc-900 tracking-tight leading-none m-0">{displayCourseTitle}</h2>
+                </div>
               </div>
-              <h2 className="text-3xl font-extrabold text-zinc-900 tracking-tight m-0 mb-2">{displayCourseTitle}</h2>
-              <p className="text-zinc-500 text-lg m-0">Intensive listening to dialogues to develop language sense.</p>
-            </div>
 
-            {/* Play Button */}
-            <button
-              id={`play-${numericCourseId}`}
-              className={`w-14 h-14 shrink-0 flex items-center justify-center rounded-full text-white transition-all duration-300 shadow-md focus:outline-none focus:ring-4 focus:ring-zinc-900/20 ${isLoadingAudio && !audioPlayerState.src ? 'bg-zinc-300 cursor-not-allowed text-zinc-500 shadow-none hover:scale-100' : 'bg-zinc-900 hover:bg-zinc-800 hover:scale-105 hover:-translate-y-1 hover:shadow-lg'}`}
-              onClick={handlePlayButtonClick}
-              disabled={isLoadingAudio && !audioPlayerState.src}
-              aria-label={audioPlayerState.isPlaying ? `Pause audio for ${displayCourseTitle}` : `Play audio for ${displayCourseTitle}`}
-            >
-              {audioPlayerState.isPlaying ? (
-                <Pause className="w-6 h-6 fill-current" />
-              ) : (
-                <Play className="w-6 h-6 ml-1 fill-current" />
-              )}
-            </button>
+              {/* 右侧：控件区 (模拟 UI) */}
+              <div className="flex items-center justify-between md:justify-end w-full md:w-auto">
+                {/* 雕刻风联播区间 */}
+                <div className="flex items-center bg-zinc-100 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.05)] border border-black/5 rounded-xl px-4 py-2">
+                  <select id="range-start" className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8" defaultValue={numericCourseId}>
+                    <option value={numericCourseId}>{numericCourseId}</option>
+                  </select>
+                  <span className="text-zinc-300 mx-2 font-mono">-</span>
+                  <select id="range-end" className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8" defaultValue={numericCourseId}>
+                    <option value={numericCourseId}>{numericCourseId}</option>
+                  </select>
+                </div>
+
+                {/* 竖线分割 */}
+                <div className="w-px h-8 bg-zinc-200 mx-5 sm:mx-6"></div>
+
+                {/* 灰阶循环按钮 */}
+                <button className="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-2 pr-2" title="到达结尾时循环该区间">
+                  <Repeat className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {isAudioFetchError && <p className="text-red-500 my-4 text-center">{audioFetchErrorData?.message || "Failed to load audio."}</p>}
           {audioUserError && <p className="text-red-500 my-4 text-center">{audioUserError}</p>}
 
-          <div id="content-body" className="space-y-4">
+          <div id="lesson-sentences" className="space-y-4">
             {sentences.map((sentence) => (
               <CourseSentenceItem key={sentence.seq} sentence={sentence} courseId={numericCourseId} />
             ))}
           </div>
-        </div>
 
-        <audio
-          ref={audioRef}
-          src={audioPlayerState.src}
-          onPlay={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: true }))}
-          onPause={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
-          onEnded={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
-          onError={(e) => {
-            setAudioUserError(`Audio playback error: ${e.target.error?.message || 'Unknown issue'}`);
-            setAudioPlayerState(prev => ({ ...prev, isPlaying: false }));
-          }}
-          style={{ display: 'none' }}
-          preload="auto"
-        />
+          <audio
+            ref={audioRef}
+            src={audioPlayerState.src}
+            onPlay={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: true }))}
+            onPause={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
+            onEnded={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
+            onError={(e) => {
+              setAudioUserError(`Audio playback error: ${e.target.error?.message || 'Unknown issue'}`);
+              setAudioPlayerState(prev => ({ ...prev, isPlaying: false }));
+            }}
+            style={{ display: 'none' }}
+            preload="auto"
+          />
+        </main>
       </div>
     );
   }
+  return null;
 };
 
 export default CourseContentPage;

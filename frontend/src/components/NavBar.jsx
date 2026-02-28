@@ -17,7 +17,7 @@ export default function NavBar({ activeCategory, onCategoryChange }) {
             <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center mr-2 shadow-md">
               <Sparkles className="w-4 h-4" />
             </div>
-            Français
+            Français Tout-en-Un
           </Link>
 
           {onCategoryChange && (

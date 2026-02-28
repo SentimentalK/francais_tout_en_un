@@ -3,13 +3,15 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import { useOrderDetailsData, useRefundOrder } from '../hooks/useOrders';
 import useCourses from '../hooks/useCourses';
+import NavBar from '../components/NavBar';
+import { FileText, ArrowLeft } from 'lucide-react';
 
-const PageSpinner = ({ message }) => <div className="mt-12 text-center text-slate-500 text-lg w-full">{message || 'Loading...'}</div>;
+const PageSpinner = ({ message }) => <div className="mt-12 text-center text-zinc-500 text-lg w-full">{message || 'Loading...'}</div>;
 
 const ResultDisplay = ({ status, title, message }) => (
-    <div className={`p-6 rounded-lg mt-8 max-w-2xl w-full mx-auto text-center border shadow-sm ${status === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
-        <h3 className="text-xl font-bold mb-3">{title}</h3>
-        <p className={`text-lg m-0 ${status === 'success' ? 'text-green-700' : 'text-red-700'}`}>{message}</p>
+    <div className={`p-8 rounded-3xl mt-8 max-w-2xl w-full mx-auto text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ${status === 'success' ? 'bg-emerald-50/50 text-emerald-800 ring-emerald-900/5' : 'bg-rose-50/50 text-rose-800 ring-rose-900/5'}`}>
+        <h3 className="text-xl font-extrabold mb-3 tracking-tight">{title}</h3>
+        <p className={`text-lg m-0 font-medium ${status === 'success' ? 'text-emerald-700' : 'text-rose-700'}`}>{message}</p>
     </div>
 );
 
@@ -63,24 +65,33 @@ const OrderDetailPage = () => {
 
     if (isLoading) {
         return (
-            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
-                <PageSpinner message="Loading order details..." />
+            <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+                <NavBar />
+                <main className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col items-center flex-grow">
+                    <PageSpinner message="Loading order receipt..." />
+                </main>
             </div>
         );
     }
 
     if (errorMessage) {
         return (
-            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
-                <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-md my-4 font-medium w-full">Error: {errorMessage}</div>
+            <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+                <NavBar />
+                <main className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col items-center flex-grow">
+                    <div className="text-center p-6 bg-rose-50 ring-1 ring-rose-200 text-rose-600 rounded-2xl my-4 font-semibold w-full shadow-sm">Error: {errorMessage}</div>
+                </main>
             </div>
         );
     }
 
     if (!displayOrder && !isLoading) {
         return (
-            <div className="max-w-4xl mx-auto w-full px-4 py-10 flex flex-col items-center">
-                <div className="text-center p-4 bg-red-50 border border-red-200 text-red-600 rounded-md my-4 font-medium w-full">Order details not found.</div>
+            <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+                <NavBar />
+                <main className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col items-center flex-grow">
+                    <div className="text-center p-6 bg-rose-50 ring-1 ring-rose-200 text-rose-600 rounded-2xl my-4 font-semibold w-full shadow-sm">Order details not found.</div>
+                </main>
             </div>
         );
     }
@@ -109,67 +120,75 @@ const OrderDetailPage = () => {
 
 
     return (
-        <div className="max-w-4xl mx-auto w-full px-4 md:px-8 py-10 md:py-12 min-h-screen flex flex-col items-center">
-            <h1 className="text-3xl font-bold text-slate-800 mb-8 m-0">Order Details</h1>
+        <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
+            <NavBar />
 
-            <OrderSummary
-                orderId={finalOrderData.order_id}
-                amount={finalOrderData.amount}
-                courses={coursesForSummary}
-            />
-
-            {refundSucceeded && (
-                <ResultDisplay
-                    status="success"
-                    title="Refund Processed"
-                    message={refundMutation.data?.message || "Your refund request has been processed successfully. The order status is updated."}
-                />
-            )}
-            {refundFailed && (
-                <ResultDisplay
-                    status="failure"
-                    title="Refund Failed"
-                    message={refundError?.response?.data?.message || refundError?.message || "An error occurred while processing your refund."}
-                />
-            )}
-
-            {!isProcessingRefund && !refundSucceeded && !refundFailed && (
-                <div className="w-full flex justify-center mt-2">
-                    {finalOrderData.refunded_at && (
-                        <ResultDisplay
-                            status="success"
-                            title="Order Refunded"
-                            message={`This order was refunded on ${new Date(finalOrderData.refunded_at).toLocaleDateString()}.`}
-                        />
-                    )}
-                    {!finalOrderData.refunded_at && finalOrderData.status !== 'PAID' && (
-                        <ResultDisplay
-                            status="failure"
-                            title="Cannot Refund"
-                            message={`This order is in '${finalOrderData.status}' status and cannot be refunded.`}
-                        />
-                    )}
-                    {canRefund && (
-                        <div className="mt-8 text-center w-full">
-                            <button
-                                onClick={handleRefund}
-                                className="w-full sm:w-auto min-w-[240px] bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-md transition-colors focus:ring-4 focus:ring-red-500/20 disabled:opacity-50"
-                                disabled={isProcessingRefund}
-                            >
-                                {isProcessingRefund ? 'Processing Refund...' : 'Request Refund'}
-                            </button>
-                        </div>
-                    )}
+            <main className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col items-center flex-grow">
+                <div className="mb-6 text-center flex flex-col items-center w-full relative">
+                    <button
+                        onClick={() => navigate('/orders')}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-2 font-medium"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> Back
+                    </button>
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm ring-1 ring-zinc-900/5">
+                        <FileText className="w-8 h-8 text-zinc-800" />
+                    </div>
+                    <h1 className="text-4xl font-extrabold m-0 tracking-tight text-center text-zinc-900">Receipt Details</h1>
                 </div>
-            )}
 
-            <button
-                onClick={() => navigate('/orders')}
-                className="w-full sm:max-w-xs bg-slate-500 hover:bg-slate-600 text-white font-medium py-3 px-8 rounded-md transition-colors mt-12 block mx-auto focus:ring-4 focus:ring-slate-500/20"
-                disabled={isProcessingRefund}
-            >
-                Back to My Orders
-            </button>
+                <OrderSummary
+                    orderId={finalOrderData.order_id}
+                    amount={finalOrderData.amount}
+                    courses={coursesForSummary}
+                />
+
+                {refundSucceeded && (
+                    <ResultDisplay
+                        status="success"
+                        title="Refund Processed"
+                        message={refundMutation.data?.message || "Your refund request has been processed successfully. The order status is updated."}
+                    />
+                )}
+                {refundFailed && (
+                    <ResultDisplay
+                        status="failure"
+                        title="Refund Failed"
+                        message={refundError?.response?.data?.message || refundError?.message || "An error occurred while processing your refund."}
+                    />
+                )}
+
+                {!isProcessingRefund && !refundSucceeded && !refundFailed && (
+                    <div className="w-full flex justify-center mt-4">
+                        {finalOrderData.refunded_at && (
+                            <ResultDisplay
+                                status="success"
+                                title="Order Refunded"
+                                message={`This order was refunded on ${new Date(finalOrderData.refunded_at).toLocaleDateString()}.`}
+                            />
+                        )}
+                        {!finalOrderData.refunded_at && finalOrderData.status !== 'PAID' && (
+                            <ResultDisplay
+                                status="failure"
+                                title="Cannot Refund"
+                                message={`This order is in '${finalOrderData.status}' status and cannot be refunded.`}
+                            />
+                        )}
+                        {canRefund && (
+                            <div className="mt-8 text-center w-full max-w-2xl px-4">
+                                <p className="text-zinc-500 mb-6 text-sm">If you are unsatisfied with your selection, you may request a refund.</p>
+                                <button
+                                    onClick={handleRefund}
+                                    className="w-full sm:w-auto min-w-[240px] bg-white ring-1 ring-rose-200 text-rose-600 hover:bg-rose-50 font-semibold py-3.5 px-8 rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 focus:ring-4 focus:ring-rose-500/20 disabled:opacity-50"
+                                    disabled={isProcessingRefund}
+                                >
+                                    {isProcessingRefund ? 'Processing...' : 'Request Refund'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </main>
         </div>
     );
 };

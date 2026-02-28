@@ -4,21 +4,14 @@ export default function CourseSentenceItem({ sentence, courseId }) {
   const displaySeq = sentence.seq;
 
   return (
-    <div className="p-4 md:p-5 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-start gap-4 group hover:bg-white hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden cursor-pointer">
-      <div className="w-10 h-10 shrink-0 rounded-full bg-white shadow-sm ring-1 ring-zinc-900/5 flex items-center justify-center text-zinc-400 font-mono text-xs mt-0.5 relative z-20">
+    <div className="group bg-white rounded-2xl p-5 md:p-6 shadow-sm ring-1 ring-zinc-900/5 hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] hover:ring-zinc-900/10 transition-all duration-300 flex flex-col sm:flex-row gap-4 md:gap-6 items-start sm:items-center cursor-pointer">
+      <div className="w-10 h-10 shrink-0 rounded-full bg-white shadow-sm ring-1 ring-zinc-900/5 flex items-center justify-center text-zinc-400 font-mono text-xs">
         {displaySeq}
       </div>
-      <div className="pt-2 relative grow h-full min-h-[1.5rem]">
-        {/* French Text (Original) */}
-        <p className="font-medium text-zinc-900 whitespace-pre-wrap leading-relaxed m-0 text-base md:text-lg tracking-tight transition-opacity duration-300 group-hover:opacity-10 relative z-10 w-full block">
-          {sentence.french}
-        </p>
-
-        {/* English Translation (Hover Reveal) */}
-        <div className="absolute top-2 left-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-start mt-0">
-          <p className="text-zinc-600 font-medium whitespace-pre-wrap leading-relaxed m-0 text-base md:text-lg tracking-tight bg-white/95 backdrop-blur-sm px-2 -mx-2 rounded-lg py-1 shadow-sm border border-zinc-100/50">
-            {sentence.english}
-          </p>
+      <div className="flex-1 w-full">
+        <p className="text-lg md:text-xl font-bold text-zinc-900 tracking-tight group-hover:text-indigo-950 transition-colors m-0 leading-relaxed whitespace-pre-wrap">{sentence.french}</p>
+        <div className="grid grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100 transition-all duration-300 ease-in-out mt-0 group-hover:mt-2">
+          <p className="text-sm md:text-base font-medium text-zinc-500 overflow-hidden m-0 leading-relaxed whitespace-pre-wrap">{sentence.english}</p>
         </div>
       </div>
     </div>
