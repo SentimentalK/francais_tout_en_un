@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchQuizContent } from '../api/courses';
 import NavBar from '../components/NavBar';
-import { ArrowLeft, Trophy, Clock, CheckCircle2, Type } from 'lucide-react';
+import { ArrowLeft, Trophy, Clock, CheckCircle2, Type, XCircle } from 'lucide-react';
 
 /* ── helpers ── */
 const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -69,6 +69,7 @@ export default function QuizPage() {
     const [elapsed, setElapsed] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [justFound, setJustFound] = useState(null); // "gi-ii" to flash
+    const [showAnswers, setShowAnswers] = useState(false);
     const inputRef = useRef(null);
     const timerRef = useRef(null);
 
@@ -79,6 +80,7 @@ export default function QuizPage() {
         setElapsed(0);
         setIsRunning(false);
         setJustFound(null);
+        setShowAnswers(false);
         if (timerRef.current) clearInterval(timerRef.current);
     }, [numericId, groups.length]);
 
@@ -188,6 +190,19 @@ export default function QuizPage() {
                                 <CheckCircle2 className="w-5 h-5" />
                                 <span className="font-mono text-lg font-bold text-zinc-800">{progress}<span className="text-zinc-400 font-normal">/{totalItems}</span></span>
                             </div>
+                            {/* Show Answers */}
+                            {!isComplete && !showAnswers && (
+                                <button
+                                    onClick={() => {
+                                        setShowAnswers(true);
+                                        setIsRunning(false);
+                                        if (timerRef.current) clearInterval(timerRef.current);
+                                    }}
+                                    className="px-4 py-2 text-sm font-semibold rounded-xl bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 transition-colors"
+                                >
+                                    Show Answers
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -199,8 +214,8 @@ export default function QuizPage() {
                             type="text"
                             value={inputValue}
                             onChange={handleInput}
-                            disabled={isComplete}
-                            placeholder={isComplete ? 'All answers found! 🎉' : 'Start typing your answer…'}
+                            disabled={isComplete || showAnswers}
+                            placeholder={isComplete ? 'All answers found! 🎉' : showAnswers ? 'Answers revealed.' : 'Start typing your answer…'}
                             autoComplete="off"
                             autoCapitalize="off"
                             spellCheck="false"
@@ -268,6 +283,7 @@ export default function QuizPage() {
                                         const key = `${gi}-${realIdx}`;
                                         const isFound = found.has(key);
                                         const isFlashing = justFound === key;
+                                        const isRevealed = showAnswers && !isFound;
 
                                         return (
                                             <div
@@ -276,20 +292,25 @@ export default function QuizPage() {
                                                     ? 'bg-emerald-100 scale-[1.01]'
                                                     : isFound
                                                         ? 'bg-emerald-50/50'
-                                                        : 'hover:bg-zinc-50/50'
+                                                        : isRevealed
+                                                            ? 'bg-rose-50/50'
+                                                            : 'hover:bg-zinc-50/50'
                                                     }`}
                                             >
                                                 <span className="text-[13px] text-zinc-500 w-2/5 shrink-0">{item.hint}</span>
-                                                <span className={`text-[13px] font-medium flex-1 transition-all duration-300 ${isFound ? 'text-emerald-700' : 'text-transparent select-none'}`}>
-                                                    {isFound ? item.answer : '•'.repeat(item.answer.length)}
+                                                <span className={`text-[13px] font-medium flex-1 transition-all duration-300 ${isFound ? 'text-emerald-700' : isRevealed ? 'text-rose-600' : 'text-transparent select-none'}`}>
+                                                    {(isFound || isRevealed) ? item.answer : '•'.repeat(item.answer.length)}
                                                 </span>
                                                 <span className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${isFlashing
                                                     ? 'bg-emerald-500 text-white scale-110'
                                                     : isFound
                                                         ? 'bg-emerald-100 text-emerald-600'
-                                                        : 'bg-zinc-100'
+                                                        : isRevealed
+                                                            ? 'bg-rose-100 text-rose-600'
+                                                            : 'bg-zinc-100'
                                                     }`}>
                                                     {isFound && <CheckCircle2 className="w-3 h-3" />}
+                                                    {isRevealed && <XCircle className="w-3 h-3" />}
                                                 </span>
                                             </div>
                                         );
