@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchQuizContent } from '../api/courses';
 import NavBar from '../components/NavBar';
-import { ArrowLeft, Trophy, Clock, CheckCircle2, Type, XCircle } from 'lucide-react';
+import { ArrowLeft, Trophy, Clock, CheckCircle2, Type, XCircle, Volume2 } from 'lucide-react';
 
 /* ── helpers ── */
 const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
@@ -15,6 +15,15 @@ function formatTime(seconds) {
 }
 
 const MAX_ITEMS_PER_COLUMN = 12;
+
+const speakFrench = (text) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+};
 
 /* ── page ── */
 export default function QuizPage() {
@@ -40,7 +49,7 @@ export default function QuizPage() {
         let total = 0;
         groups.forEach((g, gi) => {
             g.items.forEach((item, ii) => {
-                map.set(normalize(item.answer), { groupIdx: gi, itemIdx: ii });
+                map.set(normalize(item.answer), { groupIdx: gi, itemIdx: ii, answer: item.answer });
                 total++;
             });
         });
@@ -124,6 +133,7 @@ export default function QuizPage() {
                 setFound(prev => new Set(prev).add(key));
                 setJustFound(key);
                 setTimeout(() => setJustFound(null), 600);
+                speakFrench(match.answer);
             }
             setInputValue('');
         }
@@ -288,12 +298,17 @@ export default function QuizPage() {
                                         return (
                                             <div
                                                 key={realIdx}
-                                                className={`flex items-center px-4 py-2.5 transition-all duration-300 ${isFlashing
+                                                onClick={() => {
+                                                    if (isFound || isRevealed) {
+                                                        speakFrench(item.answer);
+                                                    }
+                                                }}
+                                                className={`flex items-center px-4 py-2.5 transition-all duration-300 ${(isFound || isRevealed) ? 'cursor-pointer' : ''} ${isFlashing
                                                     ? 'bg-emerald-100 scale-[1.01]'
                                                     : isFound
-                                                        ? 'bg-emerald-50/50'
+                                                        ? 'bg-emerald-50/50 hover:bg-emerald-100/50'
                                                         : isRevealed
-                                                            ? 'bg-rose-50/50'
+                                                            ? 'bg-rose-50/50 hover:bg-rose-100/50'
                                                             : 'hover:bg-zinc-50/50'
                                                     }`}
                                             >
@@ -312,6 +327,11 @@ export default function QuizPage() {
                                                     {isFound && <CheckCircle2 className="w-3 h-3" />}
                                                     {isRevealed && <XCircle className="w-3 h-3" />}
                                                 </span>
+                                                {(isFound || isRevealed) && (
+                                                    <span className="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-zinc-600 transition-colors shrink-0">
+                                                        <Volume2 className="w-5 h-5" />
+                                                    </span>
+                                                )}
                                             </div>
                                         );
                                     })}
