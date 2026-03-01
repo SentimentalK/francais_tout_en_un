@@ -1,14 +1,15 @@
 services:
   one_database:
-    image: postgres:17-alpine
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/database:latest
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1
       - POSTGRES_DB=onedb
     ports:
       - "5433:5432"
-    volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s

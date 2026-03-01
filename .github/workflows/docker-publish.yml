@@ -39,6 +39,10 @@ jobs:
             dockerfile: ./frontend/Dockerfile
             context: ./frontend
             build-args: ""
+          - service: database
+            dockerfile: ./database/Dockerfile
+            context: ./database
+            build-args: ""
 
     steps:
       - name: Checkout repository
