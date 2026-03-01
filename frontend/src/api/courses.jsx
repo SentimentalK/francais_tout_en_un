@@ -9,7 +9,7 @@ export async function fetchCourses() {
       console.warn('fetchCourses failed in dev, using mock data');
       return [{ "course_id": 1, "price": 0.00 }, { "course_id": 2, "price": 9.99 },];
     } else {
-      console.error("Error fetching courses: ",error.config?.url, error.message);
+      console.error("Error fetching courses: ", error.config?.url, error.message);
       throw error;
     }
   }
@@ -23,7 +23,7 @@ export async function fetchEntitlements() {
     const res = await apiClient.get('/entitlements/');
     return res.data;
   } catch (error) {
-    console.error("Error fetching entitlements: ",error.config?.url, error.message);
+    console.error("Error fetching entitlements: ", error.config?.url, error.message);
     throw error;
   }
 }
@@ -35,7 +35,7 @@ export async function fetchCourseSentences(courseId) {
     return res.data;
   }
   catch (error) {
-    console.error("Error fetching course sentences: ",error.config?.url, error.message);
+    console.error("Error fetching course sentences: ", error.config?.url, error.message);
     throw error;
   }
 }
@@ -51,13 +51,37 @@ export async function fetchCourseAudioBlob(courseId) {
         const errorText = await response.data.text();
         console.error('Content of unexpected blob:', errorText);
         errorDetail = errorText;
-      } catch (e){}
+      } catch (e) { }
       throw new Error(errorDetail);
     }
     return response.data;
 
   } catch (error) {
     console.error('Error fetching course audio with apiClient:', error.config?.url, error.message);
+    throw error;
+  }
+}
+
+export async function fetchQuizzes() {
+  try {
+    const res = await apiClient.get('/courses/quizzes/');
+    return res.data;
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn('fetchQuizzes failed in dev, using empty array');
+      return [];
+    }
+    console.error("Error fetching quizzes:", error.config?.url, error.message);
+    throw error;
+  }
+}
+
+export async function fetchQuizContent(quizId) {
+  try {
+    const res = await apiClient.get(`/courses/quizzes/${quizId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching quiz content:", error.config?.url, error.message);
     throw error;
   }
 }

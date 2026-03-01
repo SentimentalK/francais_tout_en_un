@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from db import CourseModel, CourseResponse, SentenceModel, SentenceResponse, get_db
+from db import CourseModel, CourseResponse, SentenceModel, SentenceResponse, QuizModel, QuizListResponse, QuizDetailResponse, get_db
 
 from utils.courses import EntitlementsCache
 from utils.tokens import TokenAuthority
@@ -79,3 +79,20 @@ def get_audio(
             for chunk in iter(lambda: f.read(1024 * 16), b""):
                 yield chunk
     return StreamingResponse(iterfile(), media_type="audio/mpeg")
+
+@app.get("/api/courses/quizzes/", response_model=List[QuizListResponse])
+def list_quizzes(db: Session = Depends(get_db)):
+    try:
+        return db.query(QuizModel).order_by(QuizModel.quiz_id).all()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/courses/quizzes/{quiz_id}", response_model=QuizDetailResponse)
+def get_quiz(quiz_id: int, db: Session = Depends(get_db)):
+    try:
+        quiz = db.query(QuizModel).filter(QuizModel.quiz_id == quiz_id).first()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    return quiz

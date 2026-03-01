@@ -380,3 +380,196 @@ SELECT DISTINCT course_id,
         ELSE 1 + (course_id - 14) * 0.25 - 0.01
     END AS price
 FROM contents;
+
+-- Quiz Service
+CREATE TABLE IF NOT EXISTS quizzes (
+    quiz_id    SERIAL PRIMARY KEY,
+    title      TEXT NOT NULL,
+    description TEXT,
+    tag        TEXT,
+    icon       TEXT DEFAULT 'BrainCircuit',
+    bg_color   TEXT DEFAULT 'bg-rose-50',
+    icon_color TEXT DEFAULT 'text-rose-600',
+    content_json TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+INSERT INTO quizzes (title, description, tag, icon, bg_color, icon_color, content_json) VALUES
+(
+  'Essential Verb Conjugations',
+  'Master the present tense conjugations of five essential French verbs.',
+  'Conjugations',
+  'PenTool',
+  'bg-purple-50',
+  'text-purple-600',
+  '[
+    {
+      "group_name": "être (to be)",
+      "items": [
+        { "hint": "I am", "answer": "Je suis" },
+        { "hint": "You are (informal)", "answer": "Tu es" },
+        { "hint": "He/She is", "answer": "Il est" },
+        { "hint": "We are", "answer": "Nous sommes" },
+        { "hint": "You are (formal/plural)", "answer": "Vous êtes" },
+        { "hint": "They are", "answer": "Ils sont" }
+      ]
+    },
+    {
+      "group_name": "avoir (to have)",
+      "items": [
+        { "hint": "I have", "answer": "J''ai" },
+        { "hint": "You have (informal)", "answer": "Tu as" },
+        { "hint": "He/She has", "answer": "Il a" },
+        { "hint": "We have", "answer": "Nous avons" },
+        { "hint": "You have (formal/plural)", "answer": "Vous avez" },
+        { "hint": "They have", "answer": "Ils ont" }
+      ]
+    },
+    {
+      "group_name": "faire (to make/do)",
+      "items": [
+        { "hint": "I make/do", "answer": "Je fais" },
+        { "hint": "You make/do (informal)", "answer": "Tu fais" },
+        { "hint": "He/She makes/does", "answer": "Il fait" },
+        { "hint": "We make/do", "answer": "Nous faisons" },
+        { "hint": "You make/do (formal/plural)", "answer": "Vous faites" },
+        { "hint": "They make/do", "answer": "Ils font" }
+      ]
+    },
+    {
+      "group_name": "aller (to go)",
+      "items": [
+        { "hint": "I go", "answer": "Je vais" },
+        { "hint": "You go (informal)", "answer": "Tu vas" },
+        { "hint": "He/She goes", "answer": "Il va" },
+        { "hint": "We go", "answer": "Nous allons" },
+        { "hint": "You go (formal/plural)", "answer": "Vous allez" },
+        { "hint": "They go", "answer": "Ils vont" }
+      ]
+    },
+    {
+      "group_name": "prendre (to take)",
+      "items": [
+        { "hint": "I take", "answer": "Je prends" },
+        { "hint": "You take (informal)", "answer": "Tu prends" },
+        { "hint": "He/She takes", "answer": "Il prend" },
+        { "hint": "We take", "answer": "Nous prenons" },
+        { "hint": "You take (formal/plural)", "answer": "Vous prenez" },
+        { "hint": "They take", "answer": "Ils prennent" }
+      ]
+    }
+  ]'
+),
+(
+  'French Numbers',
+  'Master the essential numbers in French from 0 to 1,000,000 and ordinals.',
+  'Vocabulary',
+  'BrainCircuit',
+  'bg-rose-50',
+  'text-rose-600',
+  '[
+    {
+      "group_name": "0 – 10",
+      "items": [
+        { "hint": "0", "answer": "zéro" },
+        { "hint": "1", "answer": "un" },
+        { "hint": "2", "answer": "deux" },
+        { "hint": "3", "answer": "trois" },
+        { "hint": "4", "answer": "quatre" },
+        { "hint": "5", "answer": "cinq" },
+        { "hint": "6", "answer": "six" },
+        { "hint": "7", "answer": "sept" },
+        { "hint": "8", "answer": "huit" },
+        { "hint": "9", "answer": "neuf" },
+        { "hint": "10", "answer": "dix" }
+      ]
+    },
+    {
+      "group_name": "11 – 20 & 30",
+      "items": [
+        { "hint": "11", "answer": "onze" },
+        { "hint": "12", "answer": "douze" },
+        { "hint": "13", "answer": "treize" },
+        { "hint": "14", "answer": "quatorze" },
+        { "hint": "15", "answer": "quinze" },
+        { "hint": "16", "answer": "seize" },
+        { "hint": "17", "answer": "dix-sept" },
+        { "hint": "18", "answer": "dix-huit" },
+        { "hint": "19", "answer": "dix-neuf" },
+        { "hint": "20", "answer": "vingt" },
+        { "hint": "30", "answer": "trente" }
+      ]
+    },
+    {
+      "group_name": "40 – 100,000",
+      "items": [
+        { "hint": "40", "answer": "quarante" },
+        { "hint": "50", "answer": "cinquante" },
+        { "hint": "60", "answer": "soixante" },
+        { "hint": "70", "answer": "soixante-dix" },
+        { "hint": "80", "answer": "quatre-vingts" },
+        { "hint": "90", "answer": "quatre-vingt-dix" },
+        { "hint": "100", "answer": "cent" },
+        { "hint": "200", "answer": "deux cents" },
+        { "hint": "1,000", "answer": "mille" },
+        { "hint": "2,000", "answer": "deux mille" },
+        { "hint": "100,000", "answer": "cent mille" }
+      ]
+    },
+    {
+      "group_name": "1,000,000 & Ordinals",
+      "items": [
+        { "hint": "1,000,000", "answer": "un million" },
+        { "hint": "first", "answer": "premier" },
+        { "hint": "second", "answer": "deuxième" },
+        { "hint": "third", "answer": "troisième" },
+        { "hint": "fourth", "answer": "quatrième" },
+        { "hint": "fifth", "answer": "cinquième" },
+        { "hint": "sixth", "answer": "sixième" },
+        { "hint": "seventh", "answer": "septième" },
+        { "hint": "eighth", "answer": "huitième" },
+        { "hint": "ninth", "answer": "neuvième" },
+        { "hint": "tenth", "answer": "dixième" }
+      ]
+    }
+  ]'
+),
+(
+  'Days & Months',
+  'Learn the days of the week and months of the year in French.',
+  'Vocabulary',
+  'Calendar',
+  'bg-blue-50',
+  'text-blue-600',
+  '[
+    {
+      "group_name": "Days of the Week",
+      "items": [
+        { "hint": "Monday", "answer": "lundi" },
+        { "hint": "Tuesday", "answer": "mardi" },
+        { "hint": "Wednesday", "answer": "mercredi" },
+        { "hint": "Thursday", "answer": "jeudi" },
+        { "hint": "Friday", "answer": "vendredi" },
+        { "hint": "Saturday", "answer": "samedi" },
+        { "hint": "Sunday", "answer": "dimanche" }
+      ]
+    },
+    {
+      "group_name": "Months of the Year",
+      "items": [
+        { "hint": "January", "answer": "janvier" },
+        { "hint": "February", "answer": "février" },
+        { "hint": "March", "answer": "mars" },
+        { "hint": "April", "answer": "avril" },
+        { "hint": "May", "answer": "mai" },
+        { "hint": "June", "answer": "juin" },
+        { "hint": "July", "answer": "juillet" },
+        { "hint": "August", "answer": "août" },
+        { "hint": "September", "answer": "septembre" },
+        { "hint": "October", "answer": "octobre" },
+        { "hint": "November", "answer": "novembre" },
+        { "hint": "December", "answer": "décembre" }
+      ]
+    }
+  ]'
+);

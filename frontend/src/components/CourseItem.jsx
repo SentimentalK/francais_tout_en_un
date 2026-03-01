@@ -12,11 +12,21 @@ const iconMap = {
 export default function CourseItem({ item }) {
   const IconComponent = iconMap[item.icon] || BookOpen;
   const isCourseLink = item.type === 'course';
+  const isQuizLink = item.type === 'quiz';
+
+  const linkTo = isCourseLink
+    ? `/courses/${item.course_id}/`
+    : isQuizLink
+      ? `/quizzes/${item.quiz_id}`
+      : '#';
+  const linkState = isCourseLink
+    ? { isFree: item.free, isPurchased: item.purchased }
+    : {};
 
   return (
     <Link
-      to={isCourseLink ? `/courses/${item.course_id}/` : '#'}
-      state={isCourseLink ? { isFree: item.free, isPurchased: item.purchased } : {}}
+      to={linkTo}
+      state={linkState}
       className="bg-white rounded-3xl p-6 md:p-8 shadow-sm ring-1 ring-zinc-900/5 hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 hover:ring-zinc-900/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between h-full relative overflow-hidden no-underline"
     >
       {/* Minimalist decorative corner */}

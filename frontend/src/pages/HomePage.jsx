@@ -1,27 +1,28 @@
 import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import useEntitlements from '../hooks/useEntitlements';
 import useAuth from '../hooks/useAuth';
 import useCourses from '../hooks/useCourses';
+import useQuizzes from '../hooks/useQuizzes';
 import NavBar from '../components/NavBar';
 import CourseList from '../components/CourseList';
 import { Search } from 'lucide-react';
 
-const mockDatabase = [
-  { id: 3, type: 'quiz', tag: 'Vocabulary', title: 'Jetpunk Core 100 Words', desc: '5-minute timed unordered dictation to challenge muscle memory.', icon: 'BrainCircuit', bgColor: 'bg-rose-50', iconColor: 'text-rose-600' },
-  { id: 4, type: 'quiz', tag: 'Conjugations', title: 'Group 1 Regular Verbs', desc: 'Present tense specialized training to accurately target conjugation blind spots.', icon: 'PenTool', bgColor: 'bg-purple-50', iconColor: 'text-purple-600' },
+const mockBooks = [
   { id: 5, type: 'book', tag: 'Ext. Reading', title: 'Le Petit Prince', desc: 'Bilingual French-English text with professional narration.', icon: 'Library', bgColor: 'bg-amber-50', iconColor: 'text-amber-600' },
   { id: 6, type: 'book', tag: 'Ext. Reading', title: 'L\'Étranger', desc: 'Camus\' The Stranger beginner intensive reading edition with vocabulary annotations.', icon: 'BookMarked', bgColor: 'bg-blue-50', iconColor: 'text-blue-600' },
 ];
 
 const headers = {
-  'course': { title: 'Discover Courses', sub: 'Systematic learning, steady progress.' },
+  'course': { title: 'Assimile French', sub: 'Systematic learning, steady progress.' },
   'quiz': { title: 'Special Quizzes', sub: 'Find and fill gaps, build muscle memory.' },
   'book': { title: 'Extended Readings', sub: 'Contextual reading to improve language sense.' }
 };
 
 export default function HomePage() {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeCategory, setActiveCategory] = useState('course');
+  const [activeCategory, setActiveCategory] = useState(location.state?.activeCategory || 'course');
   const { user, isLoggedIn, token } = useAuth();
 
   const {
@@ -37,6 +38,13 @@ export default function HomePage() {
     isError: isErrorEntitlements,
     error: errorEntitlementsMsg,
   } = useEntitlements(token);
+
+  const {
+    data: quizzesData,
+    isLoading: isLoadingQuizzes,
+    isError: isErrorQuizzes,
+    error: errorQuizzesMsg,
+  } = useQuizzes();
 
   const enrichedCourses = useMemo(() => {
     const baseCourses = Array.isArray(coursesData) ? coursesData : [];
@@ -67,15 +75,29 @@ export default function HomePage() {
     });
   }, [coursesData, entitlementsData, isLoggedIn]);
 
+  const enrichedQuizzes = useMemo(() => {
+    const baseQuizzes = Array.isArray(quizzesData) ? quizzesData : [];
+    return baseQuizzes.map(q => ({
+      ...q,
+      type: 'quiz',
+      desc: q.description,
+      bgColor: q.bg_color || 'bg-rose-50',
+      iconColor: q.icon_color || 'text-rose-600',
+    }));
+  }, [quizzesData]);
+
   const filteredItems = useMemo(() => {
-    let sourceData = activeCategory === 'course' ? enrichedCourses : mockDatabase.filter(item => item.type === activeCategory);
+    let sourceData;
+    if (activeCategory === 'course') sourceData = enrichedCourses;
+    else if (activeCategory === 'quiz') sourceData = enrichedQuizzes;
+    else sourceData = mockBooks;
     if (!sourceData) return [];
 
     return sourceData.filter(meta => {
-      const searchContent = `${meta.title} ${meta.desc} ${meta.tag}`.toLowerCase();
+      const searchContent = `${meta.title} ${meta.desc || ''} ${meta.tag || ''}`.toLowerCase();
       return searchContent.includes(searchTerm.toLowerCase());
     });
-  }, [enrichedCourses, activeCategory, searchTerm]);
+  }, [enrichedCourses, enrichedQuizzes, activeCategory, searchTerm]);
 
 
   let displayErrorMessage = null;
@@ -83,7 +105,13 @@ export default function HomePage() {
     displayErrorMessage = (errorCoursesMsg instanceof Error ? errorCoursesMsg.message : String(errorCoursesMsg)) || 'Failed to load courses.';
   } else if (isLoggedIn && isErrorEntitlements && activeCategory === 'course') {
     displayErrorMessage = (errorEntitlementsMsg instanceof Error ? errorEntitlementsMsg.message : String(errorEntitlementsMsg)) || 'Failed to load your entitlements.';
+  } else if (isErrorQuizzes && activeCategory === 'quiz') {
+    displayErrorMessage = (errorQuizzesMsg instanceof Error ? errorQuizzesMsg.message : String(errorQuizzesMsg)) || 'Failed to load quizzes.';
   }
+
+  const isContentLoading =
+    (activeCategory === 'course' && (isLoadingCourses || (isLoggedIn && isLoadingEntitlements))) ||
+    (activeCategory === 'quiz' && isLoadingQuizzes);
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50 font-sans">
@@ -111,7 +139,7 @@ export default function HomePage() {
 
           {displayErrorMessage ? (
             <p className="text-center text-red-500 my-8 py-10">⚠️ {displayErrorMessage}</p>
-          ) : (isLoadingCourses || (isLoggedIn && isLoadingEntitlements)) && activeCategory === 'course' ? (
+          ) : isContentLoading ? (
             <div className="text-center text-zinc-500 my-8 py-10">Loading...</div>
           ) : (
             <CourseList items={filteredItems} category={activeCategory} />

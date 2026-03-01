@@ -34,6 +34,29 @@ class SentenceModel(Base):
     french = Column(String)
     english = Column(String)
 
+class QuizModel(Base):
+    __tablename__ = "quizzes"
+    quiz_id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    tag = Column(String)
+    icon = Column(String)
+    bg_color = Column(String)
+    icon_color = Column(String)
+    content_json = Column(String, nullable=False)
+
+class QuizListResponse(BaseModel):
+    quiz_id: int
+    title: str
+    description: str | None = None
+    tag: str | None = None
+    icon: str | None = None
+    bg_color: str | None = None
+    icon_color: str | None = None
+
+class QuizDetailResponse(QuizListResponse):
+    content_json: str
+
 def get_db():
     db = SessionLocal()
     try: yield db
