@@ -6,7 +6,7 @@ import NavBar from '../components/NavBar';
 import { ArrowLeft, Trophy, Clock, CheckCircle2, Type, XCircle, Volume2 } from 'lucide-react';
 
 /* ── helpers ── */
-const normalize = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
+const normalize = (s) => s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ');
 
 function formatTime(seconds) {
     const m = Math.floor(seconds / 60);
