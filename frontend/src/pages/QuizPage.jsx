@@ -135,7 +135,22 @@ export default function QuizPage() {
                 setTimeout(() => setJustFound(null), 600);
                 speakFrench(match.answer);
             }
-            setInputValue('');
+
+            // Should we clear the input?
+            // Check if there are any *other* UNFOUND answers that start with this normalized input.
+            // If so, keep the input so the user can continue typing the longer word.
+            let hasLongerUnfoundPrefix = false;
+            for (const [ansNorm, ansObj] of answerMap.entries()) {
+                const ansKey = `${ansObj.groupIdx}-${ansObj.itemIdx}`;
+                if (ansNorm !== norm && ansNorm.startsWith(norm) && !found.has(ansKey)) {
+                    hasLongerUnfoundPrefix = true;
+                    break;
+                }
+            }
+
+            if (!hasLongerUnfoundPrefix) {
+                setInputValue('');
+            }
         }
     }, [answerMap, found, isRunning, isComplete]);
 
@@ -215,8 +230,8 @@ export default function QuizPage() {
                                         }
                                     }}
                                     className={`px-4 py-2 text-sm font-semibold rounded-xl transition-colors ${showAnswers
-                                            ? "bg-rose-100 text-rose-700 hover:bg-rose-200"
-                                            : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
+                                        ? "bg-rose-100 text-rose-700 hover:bg-rose-200"
+                                        : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
                                         }`}
                                 >
                                     {showAnswers ? "Retry Incorrect" : "Show Answers"}
