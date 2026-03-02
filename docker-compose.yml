@@ -28,6 +28,7 @@ services:
     depends_on:
       one_database:
         condition: service_healthy
+    restart: unless-stopped
     environment:
       - SERVICE_PORT=8000
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
@@ -46,6 +47,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    restart: unless-stopped
     environment:
       - SERVICE_PORT=8001
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
@@ -95,6 +97,7 @@ services:
         condition: service_healthy
       # kafka:
       #   condition: service_healthy
+    restart: unless-stopped
     environment:
       - SERVICE_PORT=8003
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
@@ -117,6 +120,7 @@ services:
       #   condition: service_healthy
       redis:
         condition: service_healthy
+    restart: unless-stopped
     environment:
       - SERVICE_PORT=8004
       - DATABASE_URL=postgresql://postgres:1@one_database:5432/onedb
@@ -137,6 +141,7 @@ services:
       - auth_service
       - course_service
       - entitlement_service
+    restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
