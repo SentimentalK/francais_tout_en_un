@@ -200,17 +200,26 @@ export default function QuizPage() {
                                 <CheckCircle2 className="w-5 h-5" />
                                 <span className="font-mono text-lg font-bold text-zinc-800">{progress}<span className="text-zinc-400 font-normal">/{totalItems}</span></span>
                             </div>
-                            {/* Show Answers */}
-                            {!isComplete && !showAnswers && (
+                            {/* Show Answers / Retry */}
+                            {!isComplete && (
                                 <button
                                     onClick={() => {
-                                        setShowAnswers(true);
-                                        setIsRunning(false);
-                                        if (timerRef.current) clearInterval(timerRef.current);
+                                        if (!showAnswers) {
+                                            setShowAnswers(true);
+                                            setIsRunning(false);
+                                            if (timerRef.current) clearInterval(timerRef.current);
+                                        } else {
+                                            setShowAnswers(false);
+                                            setIsRunning(true);
+                                            inputRef.current?.focus();
+                                        }
                                     }}
-                                    className="px-4 py-2 text-sm font-semibold rounded-xl bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 transition-colors"
+                                    className={`px-4 py-2 text-sm font-semibold rounded-xl transition-colors ${showAnswers
+                                            ? "bg-rose-100 text-rose-700 hover:bg-rose-200"
+                                            : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900"
+                                        }`}
                                 >
-                                    Show Answers
+                                    {showAnswers ? "Retry Incorrect" : "Show Answers"}
                                 </button>
                             )}
                         </div>

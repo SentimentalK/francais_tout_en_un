@@ -46,8 +46,6 @@ This project is configured with a CI/CD pipeline using **GitHub Actions** and **
    ```
 3. **Auto Updates**: The included Watchtower container runs in the background. It will automatically check for new images on GHCR every 5 minutes. When a new image is detected (from your GitHub push) it will automatically pull the new image and softly restart your services, with zero manual intervention required.
 
-*(Note: If your repository is private, you must first run `docker login ghcr.io -u <your-github-username>` on your server with a Personal Access Token).*
-
 ## Development
 **Restart & build single microservice**:
 ```
