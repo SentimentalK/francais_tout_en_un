@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from decimal import Decimal
 from sqlalchemy.orm import Session
-from db import CourseModel, CourseResponse, SentenceModel, SentenceResponse, QuizModel, QuizListResponse, QuizDetailResponse, get_db
+from db import CourseModel, CourseResponse, SentenceModel, SentenceResponse, QuizModel, QuizListResponse, QuizDetailResponse, NoteModel, NoteResponse, get_db
 
 from utils.courses import EntitlementsCache
 from utils.tokens import TokenAuthority
@@ -62,6 +62,19 @@ def get_sentences(
     if not sentences:
         raise HTTPException(status_code=404, detail="Course not found or no sentences available")
     return sentences 
+
+@app.get("/api/courses/{course_id}/notes", response_model=List[NoteResponse])
+@check_course_cache()
+def get_notes(
+        course_id: int, 
+        db: Session = Depends(get_db),
+        user_id :str = Depends(TokenAuthority.get_optional_user_id)
+    ):
+    try: 
+        notes = db.query(NoteModel).filter(NoteModel.course_id == course_id).order_by(NoteModel.note_seq).all()
+        return notes
+    except Exception as e: 
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/courses/{course_id}/audio")
 @check_course_cache()

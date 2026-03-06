@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 body {
     @apply bg-zinc-50 text-zinc-800 font-sans min-h-screen selection:bg-indigo-100 selection:text-indigo-900;

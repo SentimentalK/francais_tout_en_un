@@ -40,6 +40,18 @@ export async function fetchCourseSentences(courseId) {
   }
 }
 
+export async function fetchCourseNotes(courseId) {
+  const url = `/courses/${courseId}/notes`;
+  try {
+    const res = await apiClient.get(url);
+    return res.data;
+  }
+  catch (error) {
+    console.error("Error fetching course notes: ", error.config?.url, error.message);
+    throw error;
+  }
+}
+
 export async function fetchCourseAudioBlob(courseId) {
   const url = `/courses/${courseId}/audio`;
   try {

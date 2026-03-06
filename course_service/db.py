@@ -22,6 +22,12 @@ class SentenceResponse(BaseModel):
     french: str
     english: str
 
+class NoteResponse(BaseModel):
+    course_id: int
+    note_seq: int
+    content: str
+    related_sentence_seq: int | None = None
+
 class CourseModel(Base):
     __tablename__ = "courses"
     course_id = Column(Integer, primary_key=True)
@@ -33,6 +39,13 @@ class SentenceModel(Base):
     seq = Column(Integer, primary_key=True)
     french = Column(String)
     english = Column(String)
+
+class NoteModel(Base):
+    __tablename__ = "notes"
+    course_id = Column(Integer, primary_key=True)
+    note_seq = Column(Integer, primary_key=True)
+    content = Column(String, nullable=False)
+    related_sentence_seq = Column(Integer, nullable=True)
 
 class QuizModel(Base):
     __tablename__ = "quizzes"

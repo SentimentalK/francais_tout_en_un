@@ -50,6 +50,14 @@ CREATE TABLE IF NOT EXISTS contents (
     PRIMARY KEY (course_id, seq)
 );
 
+CREATE TABLE IF NOT EXISTS notes (
+    course_id INTEGER NOT NULL,
+    note_seq INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    related_sentence_seq INTEGER,
+    PRIMARY KEY (course_id, note_seq)
+);
+
 INSERT INTO contents (course_id, seq, french, english) VALUES
 (1,1,'Bonjour Jeanne, comment allez-vous ?','Hello, Jeanne. How are you?'),
 (1,2,'Bien, et vous ?','Well, and you?'),
@@ -372,6 +380,13 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (33,13,'Je cherche une robe verte, noire ou bleue, pas un chemisier orange ou jaune !','I''m looking for a green, black or blue dress, not an orange or yellow blouse!'),
 (33,14,'Et celle-là ? qu''est-ce que tu en penses ? C''est très chic.','And this one? What do you think (of-it),? It''s very stylish.'),
 (33,15,'Non, je ne vois rien qui m''intéresse. Mais merci quand même ! À demain.','No, I can''t see anything that interests me. But thank you all the (even), same! See you (to), tomorrow.');
+
+INSERT INTO notes (course_id, note_seq, content) VALUES
+(1, 1, '**appeler**, *to call*. **Je m''appelle** literally means "I call myself," but is equivalent to **My name''s** ... French can sometimes seem very formal (**s''il vous plaît** for *please*, see Note 3 Lesson 2), but you''ll soon get used to it.'),
+(1, 2, 'We saw in the last lesson that you can ask a question simply by raising the intonation of an affirmative phrase. Here is a more formal –but very simple– way of forming a question with the verb **être** (*to be*): you simply switch the verb and pronoun **Vous êtes Breton ? → Êtes-vous Breton ?**'),
+(1, 3, 'Remember that every noun is either masculine or feminine. But some nouns, particularly those describing men and women, have two forms: **bretonne** is the feminine form of **breton**.'),
+(1, 4, 'The first person pronoun **je**, *I*, does not take an initial capital unless it is the first word of the sentence.'),
+(1, 5, 'Now you know the main forms of **être**: **je suis**, **il est**, **vous êtes**, **nous sommes**, *I am, he is, you are, we are.*');
 
 CREATE VIEW courses AS
 SELECT DISTINCT course_id,

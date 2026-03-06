@@ -5,10 +5,12 @@ import useCourseData from '../hooks/useCourseData';
 import useCourses from '../hooks/useCourses';
 import useEntitlements from '../hooks/useEntitlements';
 import useLoopPlayback from '../hooks/useLoopPlayback';
+import { useCourseNotes } from '../hooks/useCourseNotes';
 import PurchasePrompt from '../components/PurchasePrompt';
 import ContentPageNav from '../components/ContentPageNav';
 import CourseSentenceItem from '../components/CourseSentenceItem';
 import NavBar from '../components/NavBar';
+import CourseNotesSidebar from '../components/CourseNotesSidebar';
 import { Layers, Play, Pause, AlertCircle, Repeat } from 'lucide-react';
 
 const PageSpinner = ({ message }) => <div className="text-center text-zinc-500 my-12 text-lg">{message || 'Loading...'}</div>;
@@ -58,6 +60,8 @@ const CourseContentPage = () => {
 
   const location = useLocation();
   const routeState = location.state;
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+
   let shouldRequestContent = true;
   if (routeState && ('isFree' in routeState || 'isPurchased' in routeState)) {
     const {
@@ -86,6 +90,8 @@ const CourseContentPage = () => {
 
     backendDeniedAccess,
   } = useCourseData(numericCourseId, shouldRequestContent);
+
+  const { notes } = useCourseNotes(numericCourseId, shouldRequestContent);
 
   // ── Auto-play flag for loop navigation ──
   const pendingAutoPlay = useRef(!!routeState?.autoPlay);
@@ -163,8 +169,12 @@ const CourseContentPage = () => {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
         <NavBar />
-        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow">
-          <ContentPageNav currentCourseId={numericCourseId} />
+        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow relative">
+          <ContentPageNav
+            currentCourseId={numericCourseId}
+            onNotesClick={() => setIsNotesOpen(true)}
+            hasNotes={!!(notes && notes.length > 0)}
+          />
 
           {/* 全局播控卡片 */}
           <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-zinc-900/5 mb-8">
@@ -277,6 +287,14 @@ const CourseContentPage = () => {
             }}
             style={{ display: 'none' }}
             preload="auto"
+          />
+
+          {/* Notes 侧边栏 */}
+          <CourseNotesSidebar
+            isOpen={isNotesOpen}
+            onClose={() => setIsNotesOpen(false)}
+            courseId={numericCourseId}
+            shouldRequestContent={shouldRequestContent}
           />
         </main>
       </div>
