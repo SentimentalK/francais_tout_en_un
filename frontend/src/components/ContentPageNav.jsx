@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronLeft, ChevronRight, BookOpenText } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ContentPageNav({ currentCourseId, maxCourseId = 100, onNotesClick, hasNotes = false }) {
     const navigate = useNavigate();
@@ -34,12 +34,12 @@ export default function ContentPageNav({ currentCourseId, maxCourseId = 100, onN
                     onClick={onNotesClick}
                     disabled={!hasNotes}
                     className={`mr-4 flex items-center gap-2 px-4 py-2 rounded-full transition-colors font-semibold ${hasNotes
-                            ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                            : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                        : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
                         }`}
                 >
-                    <BookOpenText className="w-4 h-4" />
-                    查看讲解 Notes
+                    <i className="ph-fill ph-book-open-text text-lg"></i>
+                    Notes
                 </button>
 
                 {/* 左翻页 */}

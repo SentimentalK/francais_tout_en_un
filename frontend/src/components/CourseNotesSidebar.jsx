@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { marked } from 'marked';
-import { X, BookOpenText } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useCourseNotes } from '../hooks/useCourseNotes';
 
 export default function CourseNotesSidebar({
@@ -65,7 +65,7 @@ export default function CourseNotesSidebar({
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white z-10 shrink-0">
                     <div className="flex items-center gap-3 text-red-600">
-                        <BookOpenText className="w-6 h-6 fill-current" />
+                        <i className="ph-fill ph-notebook text-2xl"></i>
                         <h2 className="text-xl font-semibold tracking-tight">Notes</h2>
                     </div>
                     <button
