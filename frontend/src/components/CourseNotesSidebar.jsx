@@ -59,7 +59,7 @@ export default function CourseNotesSidebar({
 
             {/* Sidebar Panel */}
             <aside
-                className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-gray-100 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed top-0 right-0 h-full w-full sm:w-1/2 md:w-[45vw] lg:w-[40vw] xl:w-1/3 min-w-[320px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-gray-100 ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Header */}
@@ -100,12 +100,12 @@ export default function CourseNotesSidebar({
 
                     {htmlNotes.map(note => (
                         <div key={note.note_seq} className="flex gap-4">
-                            <div className="text-red-600 font-bold text-lg mt-0.5 shrink-0 w-6 text-center">
+                            <div className="text-red-600 font-bold text-xl mt-0.5 shrink-0 w-8 text-center">
                                 {note.note_seq}
                             </div>
                             {/* prose container for Tailwind Typography to style Markdown tags correctly */}
                             <div
-                                className="text-gray-700 leading-relaxed text-sm prose prose-sm prose-gray max-w-none prose-p:my-0 prose-strong:text-gray-900 prose-em:italic"
+                                className="text-gray-700 leading-relaxed text-base md:text-lg prose prose-base md:prose-lg prose-gray max-w-none prose-p:my-0 prose-strong:text-gray-900 prose-em:italic"
                                 dangerouslySetInnerHTML={{ __html: note.htmlContent }}
                             />
                         </div>
