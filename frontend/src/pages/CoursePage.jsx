@@ -1,7 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import useCourseData from '../hooks/useCourseData';
+import useCourses from '../hooks/useCourses';
+import useEntitlements from '../hooks/useEntitlements';
+import useLoopPlayback from '../hooks/useLoopPlayback';
 import PurchasePrompt from '../components/PurchasePrompt';
 import ContentPageNav from '../components/ContentPageNav';
 import CourseSentenceItem from '../components/CourseSentenceItem';
@@ -15,13 +18,48 @@ const CourseContentPage = () => {
 
   const { courseId } = useParams();
   const { token, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const numericCourseId = Number(courseId);
   const displayCourseTitle = `Chapitre ${numericCourseId}`;
+
+  // ── Fetch courses & entitlements to compute max accessible course ──
+  const { data: coursesData } = useCourses();
+  const { data: entitlementsData } = useEntitlements(token);
+
+  const maxAccessibleCourseId = useMemo(() => {
+    const courses = Array.isArray(coursesData) ? coursesData : [];
+    if (courses.length === 0) return numericCourseId;
+
+    // Free courses are accessible to everyone
+    const freeCourseIds = courses
+      .filter((c) => parseFloat(c.price) === 0)
+      .map((c) => c.course_id);
+
+    // Purchased courses (logged-in users)
+    const purchasedIds = (isLoggedIn && Array.isArray(entitlementsData))
+      ? entitlementsData.map((e) => e.course_id)
+      : [];
+
+    const allAccessible = [...freeCourseIds, ...purchasedIds];
+    return allAccessible.length > 0 ? Math.max(...allAccessible) : numericCourseId;
+  }, [coursesData, entitlementsData, isLoggedIn, numericCourseId]);
+
+  // ── Loop playback hook ──
+  const {
+    rangeStart,
+    rangeEnd,
+    setRangeStart,
+    setRangeEnd,
+    loopEnabled,
+    setLoopEnabled,
+    getNextCourseId,
+    validIds,
+  } = useLoopPlayback(numericCourseId, maxAccessibleCourseId);
 
   const location = useLocation();
   const routeState = location.state;
   let shouldRequestContent = true;
-  if (routeState) {
+  if (routeState && ('isFree' in routeState || 'isPurchased' in routeState)) {
     const {
       isFree: isCourseFreeFromState,
       isPurchased: isCoursePurchasedFromState
@@ -48,6 +86,12 @@ const CourseContentPage = () => {
 
     backendDeniedAccess,
   } = useCourseData(numericCourseId, shouldRequestContent);
+
+  // ── Auto-play flag for loop navigation ──
+  const pendingAutoPlay = useRef(!!routeState?.autoPlay);
+  useEffect(() => {
+    pendingAutoPlay.current = !!routeState?.autoPlay;
+  }, [numericCourseId]);
 
 
   const handlePlayButtonClick = () => {
@@ -147,24 +191,45 @@ const CourseContentPage = () => {
                 </div>
               </div>
 
-              {/* 右侧：控件区 (模拟 UI) */}
+              {/* 右侧：控件区 */}
               <div className="flex items-center justify-between md:justify-end w-full md:w-auto">
-                {/* 雕刻风联播区间 */}
+                {/* 联播区间选择器 */}
                 <div className="flex items-center bg-zinc-100 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.05)] border border-black/5 rounded-xl px-4 py-2">
-                  <select id="range-start" className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8" defaultValue={numericCourseId}>
-                    <option value={numericCourseId}>{numericCourseId}</option>
+                  <select
+                    id="range-start"
+                    className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8"
+                    value={rangeStart}
+                    onChange={(e) => setRangeStart(Number(e.target.value))}
+                  >
+                    {validIds.map((id) => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
                   </select>
                   <span className="text-zinc-300 mx-2 font-mono">-</span>
-                  <select id="range-end" className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8" defaultValue={numericCourseId}>
-                    <option value={numericCourseId}>{numericCourseId}</option>
+                  <select
+                    id="range-end"
+                    className="appearance-none bg-transparent text-center cursor-pointer focus:outline-none text-xl font-bold text-zinc-800 hover:text-zinc-500 transition-colors w-8"
+                    value={rangeEnd}
+                    onChange={(e) => setRangeEnd(Number(e.target.value))}
+                  >
+                    {validIds.map((id) => (
+                      <option key={id} value={id}>{id}</option>
+                    ))}
                   </select>
                 </div>
 
                 {/* 竖线分割 */}
                 <div className="w-px h-8 bg-zinc-200 mx-5 sm:mx-6"></div>
 
-                {/* 灰阶循环按钮 */}
-                <button className="text-zinc-400 hover:text-zinc-900 transition-colors flex items-center gap-2 pr-2" title="到达结尾时循环该区间">
+                {/* 循环播放按钮 */}
+                <button
+                  className={`transition-colors flex items-center gap-2 pr-2 ${loopEnabled
+                    ? 'text-zinc-900 bg-zinc-200/60 rounded-lg px-2 py-1.5'
+                    : 'text-zinc-400 hover:text-zinc-900'
+                    }`}
+                  title={loopEnabled ? '关闭循环播放' : '开启循环播放'}
+                  onClick={() => setLoopEnabled((prev) => !prev)}
+                >
                   <Repeat className="w-6 h-6" />
                 </button>
               </div>
@@ -183,9 +248,29 @@ const CourseContentPage = () => {
           <audio
             ref={audioRef}
             src={audioPlayerState.src}
+            onCanPlay={() => {
+              if (pendingAutoPlay.current && audioRef.current && !audioPlayerState.isPlaying) {
+                pendingAutoPlay.current = false;
+                audioRef.current.play().catch(() => { });
+              }
+            }}
             onPlay={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: true }))}
             onPause={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
-            onEnded={() => setAudioPlayerState(prev => ({ ...prev, isPlaying: false }))}
+            onEnded={() => {
+              setAudioPlayerState(prev => ({ ...prev, isPlaying: false }));
+              if (loopEnabled) {
+                const nextId = getNextCourseId(numericCourseId);
+                if (nextId !== numericCourseId) {
+                  navigate(`/courses/${nextId}`, { state: { autoPlay: true } });
+                } else {
+                  // Only one course in range – replay it
+                  if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.play().catch(() => { });
+                  }
+                }
+              }
+            }}
             onError={(e) => {
               setAudioUserError(`Audio playback error: ${e.target.error?.message || 'Unknown issue'}`);
               setAudioPlayerState(prev => ({ ...prev, isPlaying: false }));
