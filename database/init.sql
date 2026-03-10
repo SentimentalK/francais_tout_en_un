@@ -274,7 +274,7 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (17, 9, 'Il est presque treize heures: très précisément, midi quarante-cinq.', 'It''s almost 1 o''clock (nearly 13 hours): very precisely, 12.45 (midday forty-five).'),
 (17, 10, 'Donc nous_avons le temps: l''expo^^7^^ ferme à dix-huit heures.', 'So we have (the) time: the exhibition closes at 6 o''clock (18 hours).'),
 (17, 11, 'Quelles sont les choses à voir? Et quel est le titre de cette exposition ?', 'What are the things to see? And what is the title of this exhibition?'),
-(17, 12, '"Le Sujet^^2^^, l''objet^^2^^ et l''eau". Très profond, mais pas très clair !', '"The Subject, the Object and (the) Water." Very deep (profound) but not very clear!'),
+(17, 12, '"Le Sujet^^2^^, l''objet^^2^^ et l''eau". Très profond, mais pas très clair !', '"The Subject, the Object and (the) Water." Very deep (profound) but not very clear!');
 
 INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (15, 1, 'We know that possessive adjectives have singular, plural, masculine and feminine forms (lesson 7) So, when used in a compound word -**monsieur** (*mon sieur*), **madame** (*ma dame*), **mademoiselle** (*ma demoiselle*), respectively "mysire," "my lady," "my damsel"-they follow the usual agreement rule: **monsieur** -> **messieurs**, etc. A casual way of greeting a mixed-sex group of people-often heard in cafés and bistros- is **Messieurs-dames, bonjour**, *Good morning ladies and gentlemen*. The phrase should be recognised but not used.', 1),
