@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function ContentPageNav({ currentCourseId, maxCourseId = 100, onNotesClick, hasNotes = false }) {
+export default function ContentPageNav({ currentCourseId, maxCourseId = 100, onNotesClick, hasNotes = false, isNotesOpen = false }) {
     const navigate = useNavigate();
     const courseIdNum = parseInt(currentCourseId, 10);
 
@@ -33,9 +33,11 @@ export default function ContentPageNav({ currentCourseId, maxCourseId = 100, onN
                 <button
                     onClick={onNotesClick}
                     disabled={!hasNotes}
-                    className={`mr-4 flex items-center gap-2 px-4 py-2 rounded-full transition-colors font-semibold ${hasNotes
-                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                        : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                    className={`mr-4 flex items-center gap-2 px-4 py-2 rounded-full transition-colors font-semibold ${!hasNotes
+                            ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                            : isNotesOpen
+                                ? 'bg-red-50 text-red-600'
+                                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-100'
                         }`}
                 >
                     <i className="ph-fill ph-book-open-text text-lg"></i>

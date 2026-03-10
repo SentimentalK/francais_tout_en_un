@@ -61,6 +61,7 @@ const CourseContentPage = () => {
   const location = useLocation();
   const routeState = location.state;
   const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [activeNote, setActiveNote] = useState(null);
 
   let shouldRequestContent = true;
   if (routeState && ('isFree' in routeState || 'isPurchased' in routeState)) {
@@ -169,11 +170,14 @@ const CourseContentPage = () => {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col font-sans">
         <NavBar />
-        <main className="max-w-4xl mx-auto px-6 py-10 w-full flex-grow relative">
+        <main
+          className={`mx-auto px-6 py-10 w-full flex-grow relative transition-all duration-300 ease-in-out ${isNotesOpen ? 'max-w-4xl mr-[50vw] md:mr-[45vw] lg:mr-[40vw] xl:mr-[33.333333%]' : 'max-w-4xl'}`}
+        >
           <ContentPageNav
             currentCourseId={numericCourseId}
-            onNotesClick={() => setIsNotesOpen(true)}
+            onNotesClick={() => setIsNotesOpen(!isNotesOpen)}
             hasNotes={!!(notes && notes.length > 0)}
+            isNotesOpen={isNotesOpen}
           />
 
           {/* 全局播控卡片 */}
@@ -251,7 +255,17 @@ const CourseContentPage = () => {
 
           <div id="lesson-sentences" className="space-y-4">
             {sentences.map((sentence) => (
-              <CourseSentenceItem key={sentence.seq} sentence={sentence} courseId={numericCourseId} />
+              <CourseSentenceItem
+                key={sentence.seq}
+                sentence={sentence}
+                courseId={numericCourseId}
+                activeNote={activeNote}
+                setActiveNote={setActiveNote}
+                onNoteClick={(noteId) => {
+                  setActiveNote(noteId);
+                  if (!isNotesOpen) setIsNotesOpen(true);
+                }}
+              />
             ))}
           </div>
 
@@ -295,6 +309,8 @@ const CourseContentPage = () => {
             onClose={() => setIsNotesOpen(false)}
             courseId={numericCourseId}
             shouldRequestContent={shouldRequestContent}
+            activeNote={activeNote}
+            setActiveNote={setActiveNote}
           />
         </main>
       </div>

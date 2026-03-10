@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { marked } from 'marked';
 import { X } from 'lucide-react';
 import { useCourseNotes } from '../hooks/useCourseNotes';
@@ -7,10 +7,23 @@ export default function CourseNotesSidebar({
     isOpen,
     onClose,
     courseId,
-    shouldRequestContent
+    shouldRequestContent,
+    activeNote,
+    setActiveNote
 }) {
     const [htmlNotes, setHtmlNotes] = useState([]);
     const { notes, isLoading, isError } = useCourseNotes(courseId, shouldRequestContent);
+    const noteRefs = useRef({});
+
+    // Scroll to active note when it changes
+    useEffect(() => {
+        if (isOpen && activeNote !== null && noteRefs.current[activeNote]) {
+            // Small timeout to ensure DOM is ready and transition is happening
+            setTimeout(() => {
+                noteRefs.current[activeNote]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }, [isOpen, activeNote]);
 
     // Keyboard shortcut to close
     useEffect(() => {
@@ -22,18 +35,6 @@ export default function CourseNotesSidebar({
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
-
-    // Prevent scroll on body when sidebar is open
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto'; // or empty string
-        }
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-    }, [isOpen]);
 
     // Parse markdown
     useEffect(() => {
@@ -50,16 +51,10 @@ export default function CourseNotesSidebar({
 
     return (
         <>
-            {/* Overlay Background */}
-            <div
-                className={`fixed inset-0 bg-gray-900/10 z-40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
-                onClick={onClose}
-            />
 
             {/* Sidebar Panel */}
             <aside
-                className={`fixed top-0 right-0 h-full w-full sm:w-1/2 md:w-[45vw] lg:w-[40vw] xl:w-1/3 min-w-[320px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-gray-100 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed top-16 right-0 h-[calc(100vh-64px)] w-full sm:w-1/2 md:w-[45vw] lg:w-[40vw] xl:w-1/3 min-w-[320px] bg-white shadow-[-10px_0_15px_-3px_rgba(0,0,0,0.03)] z-30 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-gray-100 ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Header */}
@@ -78,7 +73,7 @@ export default function CourseNotesSidebar({
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 bg-gray-50/50 sidebar-scroll relative">
+                <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-white sidebar-scroll relative">
 
                     {isLoading && (
                         <div className="flex justify-center py-10">
@@ -99,8 +94,14 @@ export default function CourseNotesSidebar({
                     )}
 
                     {htmlNotes.map(note => (
-                        <div key={note.note_seq} className="flex gap-4">
-                            <div className="text-red-600 font-bold text-xl mt-0.5 shrink-0 w-8 text-center">
+                        <div
+                            key={note.note_seq}
+                            ref={(el) => (noteRefs.current[note.note_seq] = el)}
+                            className={`flex gap-4 p-4 rounded-xl transition-colors duration-300 ${activeNote === note.note_seq ? 'bg-red-50' : 'hover:bg-gray-50'}`}
+                            onMouseEnter={() => setActiveNote && setActiveNote(note.note_seq)}
+                            onMouseLeave={() => setActiveNote && setActiveNote(null)}
+                        >
+                            <div className="text-red-600 font-bold text-lg pt-0.5 shrink-0 w-6">
                                 {note.note_seq}
                             </div>
                             {/* prose container for Tailwind Typography to style Markdown tags correctly */}
