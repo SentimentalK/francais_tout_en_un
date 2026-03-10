@@ -6,6 +6,25 @@ export default function CourseSentenceItem({ sentence, courseId }) {
 
   const toggleExpanded = () => setExpanded(prev => !prev);
 
+  const renderWithNotes = (text) => {
+    if (!text) return null;
+    const parts = text.split(/\^\^(.*?)\^\^/g);
+    return parts.map((part, index) => {
+      // split puts matched groups at odd indices
+      if (index % 2 === 1) {
+        return (
+          <sup
+            key={index}
+            className="text-[#c92a2a] text-[0.55em] font-bold align-super leading-none mx-[0.15em] select-none cursor-pointer hover:underline"
+          >
+            {part}
+          </sup>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div
       onClick={toggleExpanded}
@@ -16,9 +35,9 @@ export default function CourseSentenceItem({ sentence, courseId }) {
         {displaySeq}
       </div>
       <div className="flex-1 w-full">
-        <p className={`text-lg md:text-xl font-bold tracking-tight transition-colors m-0 leading-relaxed whitespace-pre-wrap ${expanded ? 'text-indigo-950' : 'text-zinc-900 group-hover:text-indigo-950'}`}>{sentence.french}</p>
+        <p className={`text-lg md:text-xl font-bold tracking-tight transition-colors m-0 leading-relaxed whitespace-pre-wrap ${expanded ? 'text-indigo-950' : 'text-zinc-900 group-hover:text-indigo-950'}`}>{renderWithNotes(sentence.french)}</p>
         <div className={`grid transition-all duration-300 ease-in-out mt-0 ${expanded ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100 group-hover:mt-2'}`}>
-          <p className="text-sm md:text-base font-medium text-zinc-500 overflow-hidden m-0 leading-relaxed whitespace-pre-wrap">{sentence.english}</p>
+          <p className="text-sm md:text-base font-medium text-zinc-500 overflow-hidden m-0 leading-relaxed whitespace-pre-wrap">{renderWithNotes(sentence.english)}</p>
         </div>
       </div>
     </div>

@@ -59,43 +59,43 @@ CREATE TABLE IF NOT EXISTS notes (
 );
 
 INSERT INTO contents (course_id, seq, french, english) VALUES
-(1, 1, 'Bonjour Jeanne, comment allez-vous ?', 'Hello Jeanne, how are you (how go-you)?'),
+(1, 1, 'Bonjour^^1^^ Jeanne, comment allez-vous^^2^^ ?', 'Hello Jeanne, how are you (how go-you)?'),
 (1, 2, 'Bien, et vous ?', 'Well, and you?'),
-(1, 3, 'Ça va très bien, merci.', '(It goes) Very well, thanks.'),
-(1, 4, 'Je vous présente ma fille, Chloé.', 'Let me introduce ( present you) my daughter, Chloé.'),
-(1, 5, 'Bonjour, Chloé. Comment ça va ?', 'Hello, Chloé. How are you (it goes)?'),
+(1, 3, 'Ça va^^3^^ très bien, merci.', '(It goes) Very well, thanks.'),
+(1, 4, 'Je vous présente^^4^^ ma fille, Chloé.', 'Let me introduce ( present you) my daughter, Chloé.'),
+(1, 5, 'Bonjour, Chloé. Comment ça va^^5^^ ?', 'Hello, Chloé. How are you (it goes)?'),
 
-(2, 1, 'Monsieur, madame, vous désirez ?', 'Sir, Madam, [what] would you like (you desire)?'),
-(2, 2, 'Deux cafés et deux croissants, s''il vous plaît.', 'Two coffees and two croissants, please (if it pleases you).'),
-(2, 3, 'Non, je préfère une tartine beurrée pour le petit-déjeuner.', 'No, I prefer a slice of buttered bread for (the) breakfast.'),
-(2, 4, 'Donc, deux expressos, un croissant et une tartine ?', 'So, two espressos, one croissant and one slice of buttered bread?'),
+(2, 1, 'Monsieur, madame, vous désirez ?^^1^^', 'Sir, Madam, [what] would you like (you desire)?'),
+(2, 2, 'Deux cafés^^2^^ et deux croissants, s''il vous plaît^^3^^.', 'Two coffees and two croissants, please (if it pleases you).'),
+(2, 3, 'Non, je préfère une tartine beurrée^^4^^ pour le petit-déjeuner^^5^^.', 'No, I prefer a slice of buttered bread for (the) breakfast.'),
+(2, 4, 'Donc, deux expressos, un croissant et une tartine^^6^^ ?', 'So, two espressos, one croissant and one slice of buttered bread?'),
 (2, 5, 'Oui, c''est ça. Le croissant est pour moi et la tartine pour elle.', 'Yes, that''s right (this-is it). The croissant is for me and the bread for her.'),
 
-(3, 1, 'Je me présente: je m''appelle Sophie Mercier.', '[Let me] introduce myself ( introduce me): I am (I call-myself) Sophie Mercier.'),
+(3, 1, 'Je me présente: je m''appelle^^1^^ Sophie Mercier.', '[Let me] introduce myself ( introduce me): I am (I call-myself) Sophie Mercier.'),
 (3, 2, 'Et voici mon ami Loïc Le Gall. Il est breton.', 'And here is my friend Loïc Le Gall. He is Breton.'),
-(3, 3, 'Et vous, êtes-vous bretonne aussi ?', 'And you, are you Breton, too?'),
-(3, 4, 'Pas du tout, je suis de Nîmes, dans le Midi de la France.', 'Not at all, I am from Nîmes, in the south of France.'),
-(3, 5, 'Mais maintenant nous sommes parisiens.', 'But now we are Parisians.'),
+(3, 3, 'Et vous, êtes-vous^^2^^ bretonne^^3^^ aussi ?', 'And you, are you Breton, too?'),
+(3, 4, 'Pas du tout, je^^4^^ suis de Nîmes, dans le Midi de la France.', 'Not at all, I am from Nîmes, in the south of France.'),
+(3, 5, 'Mais maintenant nous sommes^^5^^ parisiens.', 'But now we are Parisians.'),
 
-(4, 1, 'Pardon, est-ce que vous avez l''heure ?', 'Excuse me (pardon), do you have the time (hour)?'),
-(4, 2, 'Je n''ai pas de montre mais je pense qu''il est midi dix.', 'I don''t have a watch, but I think (that) it is ten past noon (noon ten).'),
-(4, 3, 'Mais comment le savez-vous ?', 'But how do you know that (how it you-know)?'),
+(4, 1, 'Pardon, est-ce que^^2^^ vous avez l''heure^^1^^ ?', 'Excuse me (pardon), do you have the time (hour)?'),
+(4, 2, 'Je n''ai pas^^3^^ de montre mais je pense qu''il^^4^^ est midi^^5^^ dix.', 'I don''t have a watch, but I think (that) it is ten past noon (noon ten).'),
+(4, 3, 'Mais comment le^^6^^ savez-vous ?', 'But how do you know that (how it you-know)?'),
 (4, 4, 'Parce que j''ai rendez-vous avec ma femme à midi', 'Because I''m meeting (I have an appointment with) my wife at noon'),
 (4, 5, 'et elle a toujours dix minutes de retard!', '... and she is (has) always ten minutes (of) late!'),
 
-(5, 1, 'Excusez-moi, je cherche le métro Saint-Michel.', 'Excuse me, I [am] look[ing] for the Saint-Michel metro [station].'),
-(5, 2, 'Désolée, madame, je ne suis pas d''ici.', 'Sorry, madam, I''m not from here.'),
-(5, 3, 'Mais attendez une minute, j''ai un plan de la ville.', 'But wait a minute, I have a map of the city.'),
-(5, 4, 'Voilà: traversez le boulevard et tournez à gauche à la fontaine.', 'Here [we are]: cross the boulevard and turn (to) left at the fountain.'),
+(5, 1, 'Excusez-moi, je cherche^^1^^ le métro^^2^^ Saint-Michel.', 'Excuse me, I [am] look[ing] for the Saint-Michel metro [station].'),
+(5, 2, 'Désolée^^3^^, madame^^4^^, je ne suis pas d''ici.', 'Sorry, madam, I''m not from here.'),
+(5, 3, 'Mais attendez une minute, j''ai un plan de la ville^^5^^.', 'But wait a minute, I have a map of the city.'),
+(5, 4, 'Voilà^^6^^: traversez le boulevard et tournez à gauche à la fontaine.', 'Here [we are]: cross the boulevard and turn (to) left at the fountain.'),
 (5, 5, 'Merci beaucoup pour votre aide!', 'Thanks very much (a lot) for your help!'),
 
-(6, 1, 'Bonsoir monsieur, bonsoir madame. Bienvenue à l''Hôtel Molière.', 'Good evening, sir; good evening, madam. Welcome to the Molière Hotel.'),
+(6, 1, 'Bonsoir^^1^^ monsieur, bonsoir madame. Bienvenue à l''Hôtel^^2^^ Molière.', 'Good evening, sir; good evening, madam. Welcome to the Molière Hotel.'),
 (6, 2, 'Bonsoir, nous avons une chambre réservée pour deux nuits.', 'Good evening, we have a room reserved for two nights.'),
-(6, 3, 'Quel est votre nom, s''il vous plaît ?', 'What is your name, please?'),
+(6, 3, 'Quel est votre nom^^3^^, s''il vous plaît ?', 'What is your name, please?'),
 (6, 4, 'Je m''appelle Bailly: B-A-I deux L-Y. Alain.', 'My name is (I call-myself) Bailly: B-A-I-double-L-Y. Alain.'),
-(6, 5, 'Absolument: une grande chambre avec un grand lit et une salle de bains.', 'Absolutely: a large room with a double (big) bed and a bathroom (room of bath).'),
+(6, 5, 'Absolument: une grande chambre avec un grand lit^^4^^ et une salle de bains.', 'Absolutely: a large room with a double (big) bed and a bathroom (room of bath).'),
 (6, 6, 'C''est au quatrième étage. Voici la clé.', 'It''s on (at) the fourth floor. Here''s the key.'),
-(6, 7, 'Où sont vos bagages ?', 'Where are your bags (your luggage)?');
+(6, 7, 'Où sont vos^^5^^ bagages ?', 'Where are your bags (your luggage)?');
 
 INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (1, 1, '**bonjour** literally means good (*bon*) day (*jour*). It can be used as the equivalent of *good morning* but also as a formal way of saying *hello* throughout the day until around 6 pm.', 1),
