@@ -1,7 +1,17 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { marked } from 'marked';
 import { X } from 'lucide-react';
 import { useCourseNotes } from '../hooks/useCourseNotes';
+
+// Memoize the content div so that hover state changes (activeNote) 
+// on the parent don't trigger a re-render of this inner HTML.
+// This preserves third-party DOM mutations like translation extensions.
+const NoteContent = React.memo(({ htmlContent }) => (
+    <div
+        className="text-gray-700 leading-relaxed text-base md:text-lg prose prose-base md:prose-lg prose-gray max-w-none prose-p:my-0 prose-strong:text-gray-900 prose-em:italic"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+    />
+));
 
 export default function CourseNotesSidebar({
     isOpen,
@@ -104,11 +114,7 @@ export default function CourseNotesSidebar({
                             <div className="text-red-600 font-bold text-lg pt-0.5 shrink-0 w-6">
                                 {note.note_seq}
                             </div>
-                            {/* prose container for Tailwind Typography to style Markdown tags correctly */}
-                            <div
-                                className="text-gray-700 leading-relaxed text-base md:text-lg prose prose-base md:prose-lg prose-gray max-w-none prose-p:my-0 prose-strong:text-gray-900 prose-em:italic"
-                                dangerouslySetInnerHTML={{ __html: note.htmlContent }}
-                            />
+                            <NoteContent htmlContent={note.htmlContent} />
                         </div>
                     ))}
 

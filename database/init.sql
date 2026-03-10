@@ -138,8 +138,8 @@ INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (6, 5, 'Here''s another type of agreement: pronouns also need to change depending on whether the noun is plural or singular. **Vos** is the plural of **votre**: **votre nom**, *your name*, but **vos bagages**, *your bags*. We''ll learn more about agreements later on.', 7);
 
 INSERT INTO contents (course_id, seq, french, english) VALUES
-(8, 1, 'Bonjour mademoiselle, est-ce que votre père est à la maison^^1^^ ?', 'Good morning (Good-day), miss. Is your father at home (Is it that your father is at the house)?'),
-(8, 2, 'Non, monsieur; il est au bureau aujourd''hui^^2^^.', 'No, sir; he is at the office today.'),
+(8, 1, 'Bonjour mademoiselle, est-ce que votre père est à la^^1^^ maison ?', 'Good morning (Good-day), miss. Is your father at home (Is it that your father is at the house)?'),
+(8, 2, 'Non, monsieur; il est au^^1^^ bureau aujourd''hui^^2^^.', 'No, sir; he is at the office today.'),
 (8, 3, 'À quelle heure est-ce qu''il rentre après le travail ?', '(At) what time (hour) [does] he come back after (the) work?'),
 (8, 4, 'Oh, pas avant huit heures normalement.', 'Oh, not before 8 o''clock (hours) normally.'),
 (8, 5, 'Vous voulez l''adresse de son bureau?', '[Do] you want the address of his office?'),
@@ -151,11 +151,11 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 
 (9, 1, 'Ce^^1^^ monsieur^^2^^ s''appelle Jérôme Laforge et cette^^1^^ dame est sa femme.', 'This gentlemen is called (calls-himself) Jérôme Laforge and this lady is his wife.'),
 (9, 2, 'Ils sont à la mairie pour demander une nouvelle carte d''identité pour leur fils.', 'They are at the town hall to (for) ask [for] a new identity card for their son.'),
-(9, 3, 'Quel âge a^^3^^ cet enfant^^4^^ ?', 'How old is (what age has) this child?'),
+(9, 3, 'Quel âge a^^3^^ cet enfant^^1^^ ?', 'How old is (what age has) this child?'),
 (9, 4, 'Il a huit ans^^4^^, monsieur.', 'He is (has) eight years [old], sir.'),
 (9, 5, 'Et il s''appelle Laforge? Est-ce que c''est votre enfant ?', 'And he is called (calls-himself) Laforge? Is it [he] your child?'),
 (9, 6, 'Oui, monsieur.', 'Yes, sir.'),
-(9, 7, 'Bien. Et il habite chez vous^^5^^ ?', 'Fine. And he lives with (at) you?'),
+(9, 7, 'Bien. Et il habite chez^^5^^ vous ?', 'Fine. And he lives with (at) you?'),
 (9, 8, 'Mais évidemment, avec moi et sa mère !', '(But) obviously, with me and his mother.'),
 
 (10, 1, 'D''accord^^1^^. Je fais mon travail, c''est tout.', 'OK. I''m doing my job, that''s all.'),
@@ -164,14 +164,14 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (10, 4, 'Et l''imprimé A-65?', 'And the printed [form] A-65?'),
 (10, 5, 'Ça aussi, nous l''avons.', 'That also, we have it.'),
 (10, 6, 'Ah bon? Mais est-ce que vous avez son passeport^^2^^ ?', 'Oh really (good)? But do you have his passport?'),
-(10, 7, 'Bien sûr. Nous avons même^^3^^ sa photo^^2^^.', 'Of course. We have even his photo.'),
+(10, 7, 'Bien sûr. Nous avons même^^3^^ sa^^2^^ photo.', 'Of course. We have even his photo.'),
 (10, 8, 'Très bien. Alors je vous fais^^4^^ la carte. Voilà.', 'Very well. So I''ll do (am-doing) you the card. Here it is.'),
-(10, 9, 'Réglez^^5^^ à la caisse^^5^^, s''il vous plaît.', 'Pay at the cash desk, please.'),
-(10, 10, 'Zut^^6^^! Je ne trouve pas mon portefeuille!', 'Damn! I can''t find (not find not) my wallet!'),
+(10, 9, 'Réglez à la caisse^^5^^, s''il vous plaît.', 'Pay at the cash desk, please.'),
+(10, 10, 'Zut !^^6^^ Je ne trouve^^4^^ pas mon portefeuille!', 'Damn! I can''t find (not find not) my wallet!'),
 
 (11, 1, 'Pourquoi^^1^^ allons-nous au marché ? Il est trop cher.', 'Why are we going (go we) to the market? It''s too expensive.'),
-(11, 2, 'Parce que^^1^^ tous^^2^^ les placards sont vides!', 'Because all the cupboards are empty.'),
-(11, 3, 'Nous avons besoin^^3^^ de tout^^2^^: de fruits et de légumes,', 'We (have) need (of) everything: (of) fruit, (of) vegetables,'),
+(11, 2, 'Parce que tous^^2^^ les placards sont vides!', 'Because all the cupboards are empty.'),
+(11, 3, 'Nous avons besoin de^^3^^ tout^^2^^: de fruits et de légumes,', 'We (have) need (of) everything: (of) fruit, (of) vegetables,'),
 (11, 4, 'mais aussi de pain, de fromage, de beurre, de crème, de jambon, et...', 'but also (of) bread, (of) butter, (of) cream and...'),
 (11, 5, 'Bon, je comprends. Il n''y a rien à manger. Allons-y.', 'OK (good), I understand. There''s nothing to eat. Let''s go (there).'),
 (11, 6, 'Bonjour madame. Qu''est-ce que je peux faire pour vous ?', 'Good morning madam. What can I do for you?'),
@@ -195,11 +195,11 @@ INSERT INTO contents (course_id, seq, french, english) VALUES
 (13, 4, 'C''est un nouveau^^2^^ téléphone.', 'It''s a new phone.'),
 (13, 5, 'Il fait absolument tout.', 'It does absolutely everything (all).'),
 (13, 6, 'Vous pouvez^^3^^ envoyer des messages, commander un repas,', 'You can send messages, order a meal,'),
-(13, 7, 'payer^^4^^ vos courses, écouter^^4^^ la musique, regarder des vidéos...', 'pay [for] your shopping, listen [to] music, watch videos...'),
+(13, 7, 'payer^^4^^ vos courses, écouter la musique, regarder des vidéos...', 'pay [for] your shopping, listen [to] music, watch videos...'),
 (13, 8, 'et vous pouvez même parler à quelqu''un.', 'and you can even speak to someone.'),
 (13, 9, 'Est-ce que je peux^^3^^ l''essayer ?', 'Can I try it (Is it that I can it-try)?'),
 (13, 10, 'Non, malheureusement. Ce n''est pas possible.', 'No, unfortunately. It''s not possible.'),
-(13, 11, 'Il ne marche^^5^^ pas ?', 'Isn''t it working? (It doesn''t walk)'),
+(13, 11, 'Il ne marche pas^^5^^ ?', 'Isn''t it working? (It doesn''t walk)'),
 (13, 12, 'Je ne connais^^6^^ pas le code secret.', 'I don''t know the (secret) [pass]code.');
 
 INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
@@ -243,39 +243,38 @@ INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (13, 6, 'There are two ways of saying *I know* in French. We say **je sais** when referring to a fact or some other abstract thing, and **je connais** for a person or a place. **Je connais sa mère**, *I know his/her mother*. **Nous ne connaissons pas cette ville**, *We don''t know this town*. **Il sait beaucoup de choses**, *He knows many things*. Both verbs are irregular, and the infinitives are **savoir** and **connaître**. We''ll see them again later on.', 12);
 
 INSERT INTO contents (course_id, seq, french, english) VALUES
-(15, 1, 'Bonjour mesdames, bonjour mesdemoiselles, bonjour messieurs.', 'Good morning ladies, good morning young ladies, good morning gentlemen.'),
+(15, 1, 'Bonjour mesdames, bonjour mesdemoiselles, bonjour messieurs^^1^^.', 'Good morning ladies, good morning young ladies, good morning gentlemen.'),
 (15, 2, 'Mon nom est Michèle Laroche et je suis votre guide ce matin.', 'My name is Michèle Laroche and I am your guide this morning.'),
-(15, 3, 'Nous traversons actuellement la place de la Concorde.', 'We are crossing at present (currently) Concorde Square (place of the Concorde).'),
-(15, 4, 'Devant vous, vous pouvez voir le Louvre et, à droite, la Tour Eiffel.', 'In front of you, you can see the Louvre and, on (to) [the] right, the Eiffel Tower.'),
-(15, 5, 'S''il vous plaît madame, où sont... ?', 'Please, madam, where are...'),
-(15, 6, 'Un instant. Laissez-moi terminer, s''il vous plaît.', 'Just a minute (one instant). Let me finish please.'),
-(15, 7, 'Mais c''est très important: je ne peux pas attendre cet après-midi.', 'But it''s very important: I can''t wait [until] this afternoon.'),
+(15, 3, 'Nous traversons actuellement^^2^^ la place de la Concorde.', 'We are crossing at present (currently) Concorde Square (place of the Concorde).'),
+(15, 4, 'Devant vous, vous pouvez voir^^3^^ le Louvre et, à droite, la Tour^^4^^ Eiffel.', 'In front of you, you can see the Louvre and, on (to) [the] right, the Eiffel Tower.'),
+(15, 5, 'S''il vous plaît^^5^^ madame, où sont... ?', 'Please, madam, where are...'),
+(15, 6, 'Un instant. Laissez-moi terminer, s''il vous plaît^^5^^.', 'Just a minute (one instant). Let me finish please.'),
 (15, 8, 'Eh bien, qu''est-ce que vous voulez savoir ?', 'Well, what do you want to know?'),
-(15, 9, 'Où sont les toilettes ?', 'Where is the toilet?'),
+(15, 9, 'Où sont les toilettes^^6^^ ?', 'Where is the toilet?'),
 
 (16, 1, 'Comparé à d''autres capitales, comme Moscou ou Pékin, Paris n''est pas très grand.', 'Compared to some other capitals, like Moscow or Beijing, Paris is not very big.'),
 (16, 2, 'Mais la région parisienne, c''est-à-dire la ville et sa banlieue, est grande comme Londres.', 'But the Parisian region, that is to say the city and its suburb[s], is as big as London.'),
-(16, 3, 'On l''appelle La Ville lumière, avec ses grands monuments et ses longues avenues,', 'It is called (one it-calls) The City [of] Light, with its great monuments and long avenues'),
-(16, 4, 'ses grandes églises et ses vieilles rues.', 'its grand churches and its old streets.'),
-(16, 5, 'Regardez là-bas: ce bâtiment superbe est l''Opéra,', 'Look over there: this superb building is the Opera,'),
-(16, 6, 'construit par le grand architecte Charles Garnier.', 'built by the great architect Charles Garnier.'),
+(16, 3, 'On^^1^^ l''appelle La Ville lumière, avec ses grands^^2^^ monuments et ses longues_avenues,', 'It is called (one it-calls) The City [of] Light, with its great monuments and long avenues'),
+(16, 4, 'ses grandes^^2^^_églises et ses vieilles^^2^^ rues.', 'its grand churches and its old streets.'),
+(16, 5, 'Regardez^^3^^ là-bas: ce bâtiment superbe^^4^^ est l''Opéra,', 'Look over there: this superb building is the Opera,'),
+(16, 6, 'construit par le grand_architecte^^5^^ Charles Garnier.', 'built by the great architect Charles Garnier.'),
 (16, 7, 'Derrière, vous avez les grands magasins, et, en face, on voit le Café de la Paix.', 'Behind, you have the major department stores (big shops), and, opposite, you can see (one sees) the Café de la Paix (Peace Café).'),
-(16, 8, 'C''est un bon endroit pour une photo, et la lumière est bonne aujourd''hui.', 'It''s a good spot (place) for a photo, and the light is good today.'),
-(16, 9, 'Vous pouvez faire beaucoup de belles images.', 'You can take (make) lots of beautiful pictures.'),
+(16, 8, 'C''est un bon endroit pour une photo, et la lumière est bonne^^6^^ aujourd''hui.', 'It''s a good spot (place) for a photo, and the light is good today.'),
+(16, 9, 'Vous pouvez faire beaucoup de belles_images.', 'You can take (make) lots of beautiful pictures.'),
 (16, 10, 'Si vous voulez, vous pouvez descendre du bus ici, à côté de l''arrêt.', 'If you want, you can get off (descend from) the bus here, next to the stop.'),
 
-(17, 1, 'Dites-moi, quels sont vos projets pour demain ?', 'Tell me, what are your plans (projects) for tomorrow?'),
-(17, 2, 'Il y a une nouvelle exposition à La Piscine que j''ai très envie de voir.', 'There is a new exhibition at La Piscine (the Swimming Pool that I really want (have very envy to see.'),
+(17, 1, 'Dites-moi, quels^^1^^ sont vos projets^^2^^ pour demain ?', 'Tell me, what are your plans (projects) for tomorrow?'),
+(17, 2, 'Il y a^^3^^ une nouvelle_exposition à La Piscine que j''ai très_envie^^4^^ de voir.', 'There is a new exhibition at La Piscine (the Swimming Pool that I really want (have very envy to see.'),
 (17, 3, 'Vous voulez venir avec moi ?', '[Do you] want to come with me?'),
-(17, 4, 'Je ne suis pas sûr: je dois aller chez le médecin cet après-midi.', 'I''m not sure: I have to go to the doctor [in] the (this) afternoon.'),
+(17, 4, 'Je ne suis pas sûr: je dois^^5^^ aller chez le médecin cet après-midi.', 'I''m not sure: I have to go to the doctor [in] the (this) afternoon.'),
 (17, 5, 'À quelle heure est votre rendez-vous ?', '(At) What time is your appointment?'),
-(17, 6, 'Assez tard: vers seize ou dix-sept heures. Ça ne laisse pas beaucoup de temps.', 'Quite late: around (towards) four (16 hours) or five (17 hours) o''clock. That does not leave a lot of time.'),
+(17, 6, 'Assez tard: vers seize ou dix-sept heures^^6^^. Ça ne laisse pas beaucoup de temps.', 'Quite late: around (towards) four (16 hours) or five (17 hours) o''clock. That does not leave a lot of time.'),
 (17, 7, 'Mais on peut y aller aujourd''hui si vous voulez.', 'But we can go (there) today if you want.'),
 (17, 8, 'Pourquoi pas? Quelle heure est-il maintenant ?', 'Why not? What time is it now?'),
 (17, 9, 'Il est presque treize heures: très précisément, midi quarante-cinq.', 'It''s almost 1 o''clock (nearly 13 hours): very precisely, 12.45 (midday forty-five).'),
-(17, 10, 'Donc nous avons le temps: l''expo ferme à dix-huit heures.', 'So we have (the) time: the exhibition closes at 6 o''clock (18 hours).'),
+(17, 10, 'Donc nous_avons le temps: l''expo^^7^^ ferme à dix-huit heures.', 'So we have (the) time: the exhibition closes at 6 o''clock (18 hours).'),
 (17, 11, 'Quelles sont les choses à voir? Et quel est le titre de cette exposition ?', 'What are the things to see? And what is the title of this exhibition?'),
-(17, 12, '"Le Sujet, l''objet et l''eau". Très profond, mais pas très clair !', '"The Subject, the Object and (the) Water." Very deep (profound) but not very clear!');
+(17, 12, '"Le Sujet^^2^^, l''objet^^2^^ et l''eau". Très profond, mais pas très clair !', '"The Subject, the Object and (the) Water." Very deep (profound) but not very clear!'),
 
 INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (15, 1, 'We know that possessive adjectives have singular, plural, masculine and feminine forms (lesson 7) So, when used in a compound word -**monsieur** (*mon sieur*), **madame** (*ma dame*), **mademoiselle** (*ma demoiselle*), respectively "mysire," "my lady," "my damsel"-they follow the usual agreement rule: **monsieur** -> **messieurs**, etc. A casual way of greeting a mixed-sex group of people-often heard in cafés and bistros- is **Messieurs-dames, bonjour**, *Good morning ladies and gentlemen*. The phrase should be recognised but not used.', 1),
@@ -303,45 +302,45 @@ INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 INSERT INTO contents (course_id, seq, french, english) VALUES
 (18, 1, 'Bonjour Monsieur Castille. Nous voulons prendre un rendez-vous avec vous.', 'Good morning Mr Castille. We want [to] make an appointment with you.'),
 (18, 2, 'Est-ce que vous pouvez venir le mardi vingt-deux mars ?', 'Can you come [on] (the) Tuesday [the] twenty-second (22) [of] March.'),
-(18, 3, 'Je suis libre entre neuf heures et onze heures, ou plus tard dans la journée.', 'I''m free between nine o''clock and eleven o''clock, or later (more late) in the day.'),
-(18, 4, 'Non, nous sommes pris toute la semaine, du lundi vingt et un au vendredi vingt-cinq.', 'No, we are taken the whole (all the) week, from Monday [the] twenty-first (21) to Friday [the] twenty-fifth (25).'),
+(18, 3, 'Je suis libre entre neuf heures et onze heures, ou plus tard dans la journée^^1^^.', 'I''m free between nine o''clock and eleven o''clock, or later (more late) in the day.'),
+(18, 4, 'Non, nous sommes pris toute la semaine, du^^2^^ lundi vingt et un au^^2^^ vendredi vingt-cinq.', 'No, we are taken the whole (all the) week, from Monday [the] twenty-first (21) to Friday [the] twenty-fifth (25).'),
 (18, 5, 'Avez-vous une autre date ? En mai, par exemple ?', 'Do you have another date? In May, for example?'),
-(18, 6, 'Je regrette: mai n''est pas possible, à cause des ponts.', 'I''m sorry ( regret): May is not possible, because of the long weekends (bridges).'),
-(18, 7, 'Je ne peux pas vous voir avant le mercredi trente juin. Mon emploi du temps est très chargé.', 'I can''t see you before (the) Wednesday [the] thirtieth (30) [of] June. My schedule (job of time) is very full (laden).'),
-(18, 8, 'Mais nous, nous sommes en voyage en juin et juillet.', 'But we (we, we are travelling (on journey) in June and July.'),
+(18, 6, 'Je regrette^^3^^: mai n''est pas possible, à cause des ponts.', 'I''m sorry ( regret): May is not possible, because of the long weekends (bridges).'),
+(18, 7, 'Je ne peux pas vous voir avant le mercredi trente juin. Mon emploi du temps est très chargé^^4^^.', 'I can''t see you before (the) Wednesday [the] thirtieth (30) [of] June. My schedule (job of time) is very full (laden).'),
+(18, 8, 'Mais nous, nous sommes en voyage^^5^^ en juin et juillet.', 'But we (we, we are travelling (on journey) in June and July.'),
 (18, 9, 'Moi, je suis en vacances au mois d''août. Je prends l''avion le jeudi douze pour aller aux États-Unis.', 'Me, I''m on holiday in the month of August. I am flying (take the plane to go) on (the) Thursday [the] twelfth (12) to the United States.'),
 (18, 10, 'Septembre est hors de question à cause de la rentrée scolaire.', 'September is out of [the] question because of the new academic year (the return to school).'),
-(18, 11, 'Et en octobre j''ai déjà trois conférences et un stage de formation. Novembre ?', 'And in October I already have three lectures and a training course. November?'),
+(18, 11, 'Et en octobre j''ai déjà trois conférences et un stage^^6^^ de formation^^6^^. Novembre ?', 'And in October I already have three lectures and a training course. November?'),
 (18, 12, 'Ce n''est pas un bon mois: mes parents passent trois semaines chez nous.', 'It''s not a good month: my parents are spending three weeks with us.'),
 (18, 13, 'Attendez: je peux vous proposer le samedi vingt-cinq décembre ou le dimanche vingt-six.', 'Wait: I can offer (propose) you (the) Saturday [the] twenty-fifth (25) [of] December or (the) Sunday [the] twenty-sixth (26).'),
-(18, 14, 'Mon agenda est enfin vide !', 'My diary is (finally) empty at last!'),
+(18, 14, 'Mon agenda^^6^^ est enfin vide !', 'My diary is (finally) empty at last!'),
 
 (19, 1, 'Hôtel Sacré Cœur. Comment est-ce que je peux vous aider ?', 'Hôtel Sacré Cœur (sacred heart). How can I help you?'),
 (19, 2, 'J''organise une fête pour mon anniversaire et je veux louer une salle.', 'I [am] organising a party for my birthday and I want to rent a room.'),
-(19, 3, 'Pour combien de personnes ?', 'For how many of people?'),
-(19, 4, 'Une trentaine : il y a la famille, la belle-famille, des copains.', 'About thirty: there is the family, the (beautiful) family-in-law, some mates.'),
-(19, 5, 'Je veux quelque chose de beau et pas trop cher.', 'I want something lovely (handsome) and not too expensive.'),
+(19, 3, 'Pour combien^^2^^ de personnes ?', 'For how many of people?'),
+(19, 4, 'Une trentaine^^3^^ : il y a la famille, la belle-famille^^1^^, des copains.', 'About thirty: there is the family, the (beautiful) family-in-law, some mates.'),
+(19, 5, 'Je veux quelque chose de beau^^1^^ et pas trop cher.', 'I want something lovely (handsome) and not too expensive.'),
 (19, 6, 'C''est pour quand, cette fête ? Pas à la fin de l''année, j''espère ?', 'When (it''s for when) is this party? Not at the end of the year, I hope?'),
-(19, 7, 'Nous fermons entre Noël et le Nouvel An.', 'We close between Christmas and the New Year.'),
-(19, 8, 'Pas de problème : c''est pour la soirée du trente juin, jusqu''à minuit.', 'No problem: it''s for the evening of the thirtieth [of] June, until midnight.'),
-(19, 9, 'Voyons: j''ai une belle salle pour une cinquantaine de personnes.', 'Let''s see: I have a lovely room for about fifty people.'),
-(19, 10, 'C''est un bel endroit pour une fête.', 'It''s a great place for a party.'),
-(19, 11, 'Ça coûte combien ? Je n''ai pas un gros budget.', 'How much does it cost (that costs how much)? I don''t have a big budget.'),
+(19, 7, 'Nous fermons entre Noël et le Nouvel An^^1^^.', 'We close between Christmas and the New Year.'),
+(19, 8, 'Pas de problème : c''est pour la soirée^^4^^ du trente juin, jusqu''à minuit.', 'No problem: it''s for the evening of the thirtieth [of] June, until midnight.'),
+(19, 9, 'Voyons: j''ai une belle^^1^^ salle pour une cinquantaine^^3^^ de personnes.', 'Let''s see: I have a lovely room for about fifty people.'),
+(19, 10, 'C''est un bel^^1^^ endroit pour une fête.', 'It''s a great place for a party.'),
+(19, 11, 'Ça coûte combien^^2^^ ? Je n''ai pas un gros budget.', 'How much does it cost (that costs how much)? I don''t have a big budget.'),
 (19, 12, 'Alors j''ai quelque chose de plus petit et moins cher:', 'Then I have something (of) smaller (more small) and less expensive:'),
-(19, 13, 'le placard à balais: c''est gratuit !', 'the broom cupboard: it''s free!'),
+(19, 13, 'le placard à balais: c''est gratuit^^5^^ !', 'the broom cupboard: it''s free!'),
 
 (20, 1, 'Le sujet de l''émission Carte blanche cette semaine est "Un monde idéal".', 'The subject of the programme Carte Blanche (card white) this week is "An ideal world."'),
-(20, 2, 'Nous avons posé la question suivante aux ambassadeurs de quatre pays:', 'We (have) put the following question to the ambassadors of four countries:'),
-(20, 3, 'le Japon, l''Inde, les États-Unis et la France.', '(the) Japan, (the) India, (the) United States and (the) France.'),
+(20, 2, 'Nous avons posé la question suivante aux^^1^^ ambassadeurs de quatre pays^^5^^:', 'We (have) put the following question to the ambassadors of four countries:'),
+(20, 3, 'le Japon, l''Inde, les États-Unis et la France^^2^^.', '(the) Japan, (the) India, (the) United States and (the) France.'),
 (20, 4, '"Que voulez-vous pour Noël, Monsieur l''Ambassadeur ?"', '"What do you want for Christmas, Mr (the) Ambassador?"'),
 (20, 5, 'Voici leurs réponses, dans l''ordre.', 'Here are their answers, in (the) order.'),
-(20, 6, 'L''ambassadeur japonais veut "du bonheur, de la paix et des droits humains".', 'The Japanese ambassador wants "(of the) happiness, (of the) peace and (of the) human rights."'),
-(20, 7, 'Son collègue indien veut "de la santé et de l''éducation pour tout le monde".', 'His Indian colleague wants "(of the) health and (of the) education for everyone (all the world).'),
-(20, 8, 'L''Américain veut "des emplois, de l''argent et du bien-être" pour son pays.', 'The American wants "(of the) jobs, (of the) money and (of the) well-being (well-to-be)" for his country.'),
-(20, 9, 'Mais la réponse de l''ambassadeur français est la plus intéressante.', 'But the answer of the French ambassador is the most interesting.'),
+(20, 6, 'L''ambassadeur japonais^^3^^ veut "du^^4^^ bonheur, de la^^4^^ paix et des^^4^^ droits humains".', 'The Japanese ambassador wants "(of the) happiness, (of the) peace and (of the) human rights."'),
+(20, 7, 'Son collègue indien^^3^^ veut "de la^^4^^ santé et de l''^^4^^éducation pour tout le monde".', 'His Indian colleague wants "(of the) health and (of the) education for everyone (all the world).'),
+(20, 8, 'L''Américain^^3^^ veut "des^^4^^ emplois, de l''^^4^^argent et du^^4^^ bien-être" pour son pays^^5^^.', 'The American wants "(of the) jobs, (of the) money and (of the) well-being (well-to-be)" for his country.'),
+(20, 9, 'Mais la réponse de l''ambassadeur français^^3^^ est la plus intéressante.', 'But the answer of the French ambassador is the most interesting.'),
 (20, 10, 'Ah bon? Qu''est-ce qu''il veut ?', 'Really (ah good)? What does he want?'),
-(20, 11, '"Des chocolats, du vin blanc et de la crème fraîche."', '"(of the) Chocolates, (of the) white wine and (of the) fresh cream."'),
-(20, 12, 'Ce n''est pas vrai! Il est honnête, au moins!', 'I don''t believe it! (It is not true) He''s honest, at least!');
+(20, 11, '"Des^^4^^ chocolats, du^^4^^ vin blanc et de la^^4^^ crème fraîche."', '"(of the) Chocolates, (of the) white wine and (of the) fresh cream."'),
+(20, 12, 'Ce n''est pas vrai^^6^^! Il est honnête, au moins!', 'I don''t believe it! (It is not true) He''s honest, at least!');
 
 INSERT INTO notes (course_id, note_seq, content, related_sentence_seq) VALUES
 (18, 1, '**la journée**, *the day*, refers to the period between dawn and dusk: **toute la journée** means *the whole day (or daytime)* rather than a specific day or moment in that day, for which we use **le jour**: **le jour de mon mariage**, *the day of my wedding*. A common, and useful, leave-taking expression is **Bonne journée**, *Have a good day*.', 3),
@@ -1664,6 +1663,60 @@ INSERT INTO quizzes (title, description, tag, icon, bg_color, icon_color, conten
         { "hint": "Yesterday", "answer": "hier" },
         { "hint": "Today", "answer": "aujourd''hui" },
         { "hint": "Tomorrow", "answer": "demain" }
+      ]
+    }
+  ]'
+),
+(
+  'Core Determiners & Adjectives',
+  'Master the gender and number agreement of essential French determiners like tout, ce, quel, and possessives.',
+  'Grammar',
+  'BookOpen',
+  'bg-blue-50',
+  'text-blue-600',
+  '[
+    {
+      "group_name": "tout (all/every)",
+      "items": [
+        { "hint": "All (Masculine Singular)", "answer": "tout" },
+        { "hint": "All (Feminine Singular)", "answer": "toute" },
+        { "hint": "All (Masculine Plural)", "answer": "tous" },
+        { "hint": "All (Feminine Plural)", "answer": "toutes" }
+      ]
+    },
+    {
+      "group_name": "Demonstratives (this/that/these/those)",
+      "items": [
+        { "hint": "This/That (Masculine Singular)", "answer": "ce" },
+        { "hint": "This/That (Masc. Sing. before vowel/h)", "answer": "cet" },
+        { "hint": "This/That (Feminine Singular)", "answer": "cette" },
+        { "hint": "These/Those (Plural)", "answer": "ces" }
+      ]
+    },
+    {
+      "group_name": "Interrogatives (which/what)",
+      "items": [
+        { "hint": "Which/What (Masculine Singular)", "answer": "quel" },
+        { "hint": "Which/What (Feminine Singular)", "answer": "quelle" },
+        { "hint": "Which/What (Masculine Plural)", "answer": "quels" },
+        { "hint": "Which/What (Feminine Plural)", "answer": "quelles" }
+      ]
+    },
+    {
+      "group_name": "Possessives (My)",
+      "items": [
+        { "hint": "My (Masculine Singular / before vowel)", "answer": "mon" },
+        { "hint": "My (Feminine Singular)", "answer": "ma" },
+        { "hint": "My (Plural)", "answer": "mes" }
+      ]
+    },
+    {
+      "group_name": "Indefinites (none/same)",
+      "items": [
+        { "hint": "None (Masculine Singular)", "answer": "aucun" },
+        { "hint": "None (Feminine Singular)", "answer": "aucune" },
+        { "hint": "Same (Singular)", "answer": "même" },
+        { "hint": "Same (Plural)", "answer": "mêmes" }
       ]
     }
   ]'
