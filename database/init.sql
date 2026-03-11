@@ -1762,141 +1762,153 @@ INSERT INTO quizzes (title, description, tag, icon, bg_color, icon_color, conten
   ]'
 ),
 (
-  'Questions: Confirmation & Clarification',
-  'Phrases needed to confirm information or clarify details.',
+  'Lessons 1-6: French Survival Basics',
+  'Master essential daily interactions including greetings, ordering food, personal introductions, asking for the time, navigating the city, and hotel check-ins.',
   'Phrases',
-  'MessageCircleQuestion',
+  'BrainCircuit',
   'bg-indigo-50',
   'text-indigo-600',
   '[
     {
-      "group_name": "Basic Confirmation",
+      "group_name": "Lesson 1: Greetings & Introductions",
       "items": [
-        { "hint": "Is it possible to...?", "answer": "Est-il possible de... ?" },
-        { "hint": "..., right?", "answer": "..., n''est-ce pas ?" },
-        { "hint": "Is the activity taking place outdoors?", "answer": "Est-ce que l''activité a lieu en plein air ?" },
-        { "hint": "Can you tell me if it''s free?", "answer": "Peux-tu me dire si c''est gratuit ?" },
-        { "hint": "Is this the meeting place?", "answer": "Est-ce bien le lieu de rendez-vous ?" }
+        { "hint": "[Original/Core] How are you (how go-you)?", "answer": "Comment allez-vous ?" },
+        { "hint": "[Pronoun] How is he (how goes he)?", "answer": "Comment va-t-il ?" },
+        { "hint": "[Original/Core] I introduce my daughter to you.", "answer": "Je vous présente ma fille." },
+        { "hint": "[Vocab] I introduce my friend to you.", "answer": "Je vous présente mon ami." },
+        { "hint": "[Timeline] I am going to introduce my daughter.", "answer": "Je vais présenter ma fille." },
+        { "hint": "[Original/Core] It goes very well, thanks.", "answer": "Ça va très bien, merci." }
       ]
     },
     {
-      "group_name": "Advanced Clarification",
+      "group_name": "Lesson 2: Ordering at a Café",
       "items": [
-        { "hint": "Is there an age limit to participate?", "answer": "Y a-t-il une limite d''âge pour y participer ?" },
-        { "hint": "Is it true that we have to arrive early?", "answer": "Est-il vrai qu''il faut venir en avance ?" },
-        { "hint": "Is this an outing for families?", "answer": "Est-ce qu''il s''agit d''une sortie pour les familles ?" },
-        { "hint": "Is there an online site to register?", "answer": "Existe-t-il un site en ligne pour s''inscrire ?" },
-        { "hint": "Is it possible to register on-site?", "answer": "Y a-t-il une possibilité de s''inscrire sur place ?" },
-        { "hint": "Is it possible to come accompanied?", "answer": "Est-il possible de venir accompagné ?" }
+        { "hint": "[Original/Core] What would you like (you desire)?", "answer": "Vous désirez ?" },
+        { "hint": "[Pronoun] What does she want (she desires)?", "answer": "Elle désire ?" },
+        { "hint": "[Original/Core] I prefer a slice of buttered bread.", "answer": "Je préfère une tartine beurrée." },
+        { "hint": "[Vocab] I prefer a coffee.", "answer": "Je préfère un café." },
+        { "hint": "[Timeline] I preferred a coffee.", "answer": "J''ai préféré un café." },
+        { "hint": "[Original/Core] Two croissants, please.", "answer": "Deux croissants, s''il vous plaît." }
+      ]
+    },
+    {
+      "group_name": "Lesson 3: Introducing Oneself",
+      "items": [
+        { "hint": "[Original/Core] My name is (I call myself) Sophie.", "answer": "Je m''appelle Sophie." },
+        { "hint": "[Pronoun] His name is (he calls himself) Loïc.", "answer": "Il s''appelle Loïc." },
+        { "hint": "[Original/Core] Are you Breton too?", "answer": "Êtes-vous breton aussi ?" },
+        { "hint": "[Pronoun] Are they Parisian too?", "answer": "Sont-ils parisiens aussi ?" },
+        { "hint": "[Original/Core] I am from Nîmes.", "answer": "Je suis de Nîmes." },
+        { "hint": "[Timeline] I am going to be Parisian.", "answer": "Je vais être parisien." }
+      ]
+    },
+    {
+      "group_name": "Lesson 4: Asking for the Time",
+      "items": [
+        { "hint": "[Original/Core] Do you have the time?", "answer": "Est-ce que vous avez l''heure ?" },
+        { "hint": "[Pronoun] Does he have the time?", "answer": "Est-ce qu''il a l''heure ?" },
+        { "hint": "[Original/Core] I do not have a watch.", "answer": "Je n''ai pas de montre." },
+        { "hint": "[Vocab] I do not have an appointment.", "answer": "Je n''ai pas de rendez-vous." },
+        { "hint": "[Timeline] I just had an appointment.", "answer": "Je viens d''avoir un rendez-vous." },
+        { "hint": "[Original/Core] How do you know that?", "answer": "Comment le savez-vous ?" }
+      ]
+    },
+    {
+      "group_name": "Lesson 5: Asking for Directions",
+      "items": [
+        { "hint": "[Original/Core] I am looking for the subway.", "answer": "Je cherche le métro." },
+        { "hint": "[Vocab] I am looking for a room.", "answer": "Je cherche une chambre." },
+        { "hint": "[Timeline] I am going to look for the subway.", "answer": "Je vais chercher le métro." },
+        { "hint": "[Original/Core] I am not from here.", "answer": "Je ne suis pas d''ici." },
+        { "hint": "[Pronoun] They are not from here.", "answer": "Ils ne sont pas d''ici." },
+        { "hint": "[Original/Core] Cross the boulevard and turn left.", "answer": "Traversez le boulevard et tournez à gauche." }
+      ]
+    },
+    {
+      "group_name": "Lesson 6: Hotel Check-in",
+      "items": [
+        { "hint": "[Original/Core] We have a reserved room.", "answer": "Nous avons une chambre réservée." },
+        { "hint": "[Pronoun] I have a reserved room.", "answer": "J''ai une chambre réservée." },
+        { "hint": "[Original/Core] What is your name, please?", "answer": "Quel est votre nom, s''il vous plaît ?" },
+        { "hint": "[Vocab] Where is your key?", "answer": "Où est votre clé ?" },
+        { "hint": "[Original/Core] Where is your luggage?", "answer": "Où sont vos bagages ?" },
+        { "hint": "[Timeline] We are going to have a room.", "answer": "Nous allons avoir une chambre." }
       ]
     }
   ]'
 ),
 (
-  'Questions: Conditions & Regulations',
-  'Master asking about requirements, restrictions, and rules for events and services.',
+  'Lessons 8-13: Daily Logistics & Transactions',
+  'Master practical scenarios including locating people and addresses, handling administrative tasks at the town hall, grocery shopping at the market, making transactions, and discussing basic technology.',
   'Phrases',
-  'ShieldAlert',
-  'bg-red-50',
-  'text-red-600',
+  'BrainCircuit',
+  'bg-indigo-50',
+  'text-indigo-600',
   '[
     {
-      "group_name": "Requirements & Rules",
+      "group_name": "Lesson 8: Finding People & Addresses",
       "items": [
-        { "hint": "Is it necessary to book in advance?", "answer": "Faut-il réserver à l''avance ?" },
-        { "hint": "Do I have to bring my own equipment?", "answer": "Dois-je apporter mon propre matériel ?" },
-        { "hint": "Should I arrive earlier to register?", "answer": "Devrais-je arriver plus tôt pour m''enregistrer ?" },
-        { "hint": "Are there specific rules to follow?", "answer": "Existe-t-il des règles spécifiques à respecter ?" },
-        { "hint": "Is it mandatory to wear a helmet?", "answer": "Est-il obligatoire de porter un casque ?" }
+        { "hint": "[Original/Core] Is your father at home?", "answer": "Est-ce que votre père est à la maison ?" },
+        { "hint": "[Pronoun] She is at the office today.", "answer": "Elle est au bureau aujourd''hui." },
+        { "hint": "[Pronoun] What time do you come back?", "answer": "À quelle heure est-ce que vous rentrez ?" },
+        { "hint": "[Original/Core] Do you want the address of his office?", "answer": "Vous voulez l''adresse de son bureau ?" },
+        { "hint": "[Vocab] I am looking for my passport.", "answer": "Je cherche mon passeport." },
+        { "hint": "[Timeline] I am going to look for my address book.", "answer": "Je vais chercher mon carnet d''adresses." }
       ]
     },
     {
-      "group_name": "Restrictions",
+      "group_name": "Lesson 9: Town Hall & Identity",
       "items": [
-        { "hint": "Are there age or health restrictions?", "answer": "Y a-t-il des restrictions concernant l''âge ou la santé ?" },
-        { "hint": "Can we come with children?", "answer": "Peut-on venir avec des enfants ?" }
-      ]
-    }
-  ]'
-),
-(
-  'Questions: Costs, Services & Access',
-  'Phrases related to money, included services, transportation, and facilities.',
-  'Phrases',
-  'MapPin',
-  'bg-sky-50',
-  'text-sky-600',
-  '[
-    {
-      "group_name": "Prices & Logistics",
-      "items": [
-        { "hint": "How much does one night cost?", "answer": "Combien coûte une nuit ?" },
-        { "hint": "Is there a shuttle service?", "answer": "Y a-t-il un service de navette ?" },
-        { "hint": "Where can I buy tickets?", "answer": "Où puis-je acheter les billets ?" },
-        { "hint": "Where is the exact location of the event?", "answer": "Où est situé le lieu exact de l''événement ?" }
+        { "hint": "[Pronoun] My name is (I call myself) Jérôme.", "answer": "Je m''appelle Jérôme." },
+        { "hint": "[Original/Core] How old is this child?", "answer": "Quel âge a cet enfant ?" },
+        { "hint": "[Pronoun] She is eight years old.", "answer": "Elle a huit ans." },
+        { "hint": "[Vocab] Is it your passport?", "answer": "Est-ce que c''est votre passeport ?" },
+        { "hint": "[Timeline] Is he going to live with you?", "answer": "Il va habiter chez vous ?" },
+        { "hint": "[Pronoun] We are at the town hall.", "answer": "Nous sommes à la mairie." }
       ]
     },
     {
-      "group_name": "Inclusions",
+      "group_name": "Lesson 10: Forms & Bureaucracy",
       "items": [
-        { "hint": "Is the meal included in the price?", "answer": "Est-ce que le repas est inclus dans le prix ?" },
-        { "hint": "Are animals allowed in the establishment?", "answer": "Les animaux sont-ils acceptés dans l''établissement ?" }
-      ]
-    }
-  ]'
-),
-(
-  'Questions: Organization & Operations',
-  'Ask about the schedule, flow, and staff of an activity.',
-  'Phrases',
-  'ListOrdered',
-  'bg-emerald-50',
-  'text-emerald-600',
-  '[
-    {
-      "group_name": "Process & Scheduling",
-      "items": [
-        { "hint": "How does the registration work?", "answer": "Comment fonctionne l''inscription ?" },
-        { "hint": "How is the meal organized during the activity?", "answer": "Comment s''organise le repas pendant l''activité ?" },
-        { "hint": "What is the schedule for the day?", "answer": "Quel est le déroulement de la journée ?" },
-        { "hint": "How long does each session last?", "answer": "Combien de temps dure chaque séance ?" },
-        { "hint": "How often does this activity take place?", "answer": "À quelle fréquence a lieu cette activité ?" }
+        { "hint": "[Original/Core] Do you have the form?", "answer": "Est-ce que vous avez le formulaire ?" },
+        { "hint": "[Pronoun] I have it.", "answer": "Je l''ai." },
+        { "hint": "[Vocab] Do you have his address?", "answer": "Est-ce que vous avez son adresse ?" },
+        { "hint": "[Timeline] I am going to pay at the cash desk.", "answer": "Je vais régler à la caisse." },
+        { "hint": "[Original/Core] I cannot find my wallet!", "answer": "Je ne trouve pas mon portefeuille !" },
+        { "hint": "[Pronoun] You are doing your job.", "answer": "Vous faites votre travail." }
       ]
     },
     {
-      "group_name": "Details & Contacts",
+      "group_name": "Lesson 11: Grocery Shopping",
       "items": [
-        { "hint": "Who is responsible for the reception?", "answer": "Qui est responsable de l''accueil ?" },
-        { "hint": "Is there a contact person in case of a problem?", "answer": "Y a-t-il une personne à contacter en cas de problème ?" },
-        { "hint": "What type of equipment is required?", "answer": "Quel type de matériel est requis ?" },
-        { "hint": "What are the steps to finalize the registration?", "answer": "Quelles sont les étapes pour finaliser l''inscription ?" },
-        { "hint": "Do you know other similar events?", "answer": "Connaissez-vous d''autres événements similaires ?" }
-      ]
-    }
-  ]'
-),
-(
-  'Questions: Subjective & Personal',
-  'Encourage someone to share their personal experience or feelings.',
-  'Phrases',
-  'Smile',
-  'bg-pink-50',
-  'text-pink-600',
-  '[
-    {
-      "group_name": "Experiences & Feelings",
-      "items": [
-        { "hint": "Have you ever participated in this kind of event?", "answer": "As-tu déjà participé à ce genre d''événement ?" },
-        { "hint": "How did you find it?", "answer": "Tu as trouvé ça comment ?" },
-        { "hint": "Do you think it''s worth it?", "answer": "Penses-tu que ça vaut le coup ?" },
-        { "hint": "Did you feel stress during the activity?", "answer": "As-tu ressenti du stress pendant l''activité ?" }
+        { "hint": "[Pronoun] Why are you going to the market?", "answer": "Pourquoi allez-vous au marché ?" },
+        { "hint": "[Original/Core] We need everything.", "answer": "Nous avons besoin de tout." },
+        { "hint": "[Pronoun] What can he do for you?", "answer": "Qu''est-ce qu''il peut faire pour vous ?" },
+        { "hint": "[Vocab] I am going to buy a kilo of apples.", "answer": "Je vais acheter un kilo de pommes." },
+        { "hint": "[Original/Core] What can I do for you?", "answer": "Qu''est-ce que je peux faire pour vous ?" },
+        { "hint": "[Pronoun] It is not too expensive.", "answer": "Ce n''est pas trop cher." }
       ]
     },
     {
-      "group_name": "Opinions",
+      "group_name": "Lesson 12: Market Transactions",
       "items": [
-        { "hint": "In your opinion, is it suitable for beginners?", "answer": "À ton avis, c''est adapté aux débutants ?" },
-        { "hint": "What was your impression of the atmosphere?", "answer": "Quelle a été ton impression sur l''ambiance ?" }
+        { "hint": "[Vocab] Do you want some apples?", "answer": "Vous voulez des pommes ?" },
+        { "hint": "[Original/Core] Can I taste them?", "answer": "Est-ce que je peux les goûter ?" },
+        { "hint": "[Pronoun] How much is it?", "answer": "C''est à combien ?" },
+        { "hint": "[Pronoun] We have everything that we want.", "answer": "Nous avons tout ce que nous voulons." },
+        { "hint": "[Original/Core] That makes you twenty-six euros.", "answer": "Ça vous fait vingt-six euros." },
+        { "hint": "[Vocab] Here is your passport.", "answer": "Voici votre passeport." }
+      ]
+    },
+    {
+      "group_name": "Lesson 13: Technology & Features",
+      "items": [
+        { "hint": "[Original/Core] What is it?", "answer": "Qu''est-ce que c''est ?" },
+        { "hint": "[Pronoun] Doesn''t he know?", "answer": "Il ne sait pas ?" },
+        { "hint": "[Pronoun] We can send messages.", "answer": "Nous pouvons envoyer des messages." },
+        { "hint": "[Original/Core] Can I try it?", "answer": "Est-ce que je peux l''essayer ?" },
+        { "hint": "[Timeline] Didn''t it work?", "answer": "Il n''a pas marché ?" },
+        { "hint": "[Vocab] I don''t know the address.", "answer": "Je ne connais pas l''adresse." }
       ]
     }
   ]'
