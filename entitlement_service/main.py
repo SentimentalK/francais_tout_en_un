@@ -13,7 +13,7 @@ from utils.courses import EntitlementsCache
 
 import redis.asyncio as redis
 from redis.asyncio.connection import ConnectionPool
-from redis.exceptions import ResponseError
+from redis.exceptions import ResponseError, RedisError
 
 from utils.logs import setup_logging
 setup_logging()
@@ -162,24 +162,36 @@ async def consume_redis_events():
     tasks = set()
     try:
         while True:
-            response = await r.xreadgroup(
-                groupname=CONSUMER_GROUP_NAME,
-                consumername=f"consumer-{os.getpid()}",
-                streams=streams_to_read,
-                count=10,
-                block=5000 # Wait 5 seconds
-            )
+            try:
+                response = await r.xreadgroup(
+                    groupname=CONSUMER_GROUP_NAME,
+                    consumername=f"consumer-{os.getpid()}",
+                    streams=streams_to_read,
+                    count=10,
+                    block=5000 # Wait 5 seconds
+                )
 
-            if not response:
-                continue
+                if not response:
+                    continue
 
-            for stream, messages in response:
-                stream_name = stream.decode('utf-8')
-                for msg_id, data in messages:
-                    msg_id_str = msg_id.decode('utf-8')
-                    task = asyncio.create_task(handle_redis_event(stream_name, msg_id_str, data, r))
-                    tasks.add(task)
-                    tasks = {t for t in tasks if not t.done()}
+                for stream, messages in response:
+                    stream_name = stream.decode('utf-8')
+                    for msg_id, data in messages:
+                        msg_id_str = msg_id.decode('utf-8')
+                        task = asyncio.create_task(handle_redis_event(stream_name, msg_id_str, data, r))
+                        tasks.add(task)
+                        tasks = {t for t in tasks if not t.done()}
+            except RedisError as e:
+                logger.warning(f"Redis error in consumer loop: {e}. Reconnecting in 2 seconds...")
+                await asyncio.sleep(2)
+                try:
+                    await r.close()
+                except Exception:
+                    pass
+                r = await get_redis_connection()
+            except Exception as e:
+                logger.error(f"Unexpected error in Redis consumer loop: {e}. Retrying in 5 seconds...", exc_info=True)
+                await asyncio.sleep(5)
     finally:
         await r.close()
         if tasks:
