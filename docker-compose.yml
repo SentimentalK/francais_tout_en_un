@@ -84,7 +84,6 @@ services:
 
   purchase_service:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sentimentalk}/francais_tout_en_un/purchase_service:latest
-    profiles: [ "commercial" ]
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -141,6 +140,7 @@ services:
       - auth_service
       - course_service
       - entitlement_service
+      - purchase_service
     restart: unless-stopped
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
